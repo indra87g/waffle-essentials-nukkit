@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '20' # Ganti dengan versi Java sesuai kebutuhan plugin kamu
+        java-version: '8'
 
     - name: Cache Maven
       uses: actions/cache@v3
@@ -31,5 +31,5 @@ jobs:
     - name: Upload Plugin JAR
       uses: actions/upload-artifact@v4
       with:
-        name: NukkitPlugin
+        name: WaffleCoreNK
         path: target/*.jar

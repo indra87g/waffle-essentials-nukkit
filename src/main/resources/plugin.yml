@@ -9,7 +9,14 @@ commands:
     description: "Sets a block at a specific location"
     usage: "/setblock <x> <y> <z> <block_id>"
     permission: waffle.setblock
+  servers:
+    description: "Shows a list of servers"
+    usage: "/servers"
+    permission: waffle.servers
 permissions:
   waffle.setblock:
     description: "Allows the user to use the /setblock command"
     default: op
+  waffle.servers:
+    description: "Allows the user to use the /servers command"
+    default: true

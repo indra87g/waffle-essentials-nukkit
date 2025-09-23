@@ -5,7 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.network.protocol.TransferPacket;
 import cn.nukkit.scheduler.PluginTask;
-import com.github.mefrreex.formconstructor.form.SimpleForm;
+import com.mefrreex.formconstructor.form.SimpleForm;
 import com.indra87g.Main;
 
 import java.util.List;

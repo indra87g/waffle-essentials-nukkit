@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class Main extends PluginBase {
 
-    private List<Map<?, ?>> servers;
+    private List<Map> servers;
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
     private final Map<UUID, cn.nukkit.level.Location> playerLocations = new HashMap<>();
@@ -37,7 +37,7 @@ public class Main extends PluginBase {
         this.getServer().getCommandMap().register("servers", serversCommand);
     }
 
-    public List<Map<?, ?>> getServers() {
+    public List<Map> getServers() {
         return servers;
     }
 

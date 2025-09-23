@@ -36,15 +36,15 @@ public class ServersCommand extends Command implements Listener {
 
         Player player = (Player) sender;
 
-        List<Map<?, ?>> servers = plugin.getServers();
+        List<Map> servers = plugin.getServers();
         if (servers == null || servers.isEmpty()) {
             player.sendMessage("There are no servers available at the moment. Please try again later.");
             return true;
         }
 
         FormWindowSimple form = new FormWindowSimple("Server Selector", "Choose a server to connect to.");
-        for (Map<?, ?> serverData : servers) {
-            form.addButton(new ElementButton((String) serverData.get("name")));
+        for (Map serverData : servers) {
+            form.addButton(new ElementButton(String.valueOf(serverData.get("name"))));
         }
 
         int formId = player.showFormWindow(form);
@@ -69,14 +69,14 @@ public class ServersCommand extends Command implements Listener {
                 FormWindowSimple form = (FormWindowSimple) event.getWindow();
                 int buttonIndex = form.getResponse().getClickedButtonId();
 
-                List<Map<?, ?>> servers = plugin.getServers();
+                List<Map> servers = plugin.getServers();
                 if (servers == null || buttonIndex >= servers.size()) {
                     return; // Should not happen
                 }
 
-                Map<?, ?> serverData = servers.get(buttonIndex);
-                String address = (String) serverData.get("address");
-                int port = (int) serverData.get("port");
+                Map serverData = servers.get(buttonIndex);
+                String address = String.valueOf(serverData.get("address"));
+                int port = ((Number) serverData.get("port")).intValue();
 
                 if (plugin.getTeleportingPlayers().containsKey(playerUUID)) {
                     player.sendMessage("You are already being transferred to a server.");

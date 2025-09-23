@@ -3,17 +3,24 @@ package com.indra87g.commands;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerFormRespondedEvent;
+import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.network.protocol.TransferPacket;
 import cn.nukkit.scheduler.PluginTask;
-import com.mefrreex.formconstructor.form.SimpleForm;
+import cn.nukkit.form.window.FormWindowSimple;
 import com.indra87g.Main;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-public class ServersCommand extends Command {
+public class ServersCommand extends Command implements Listener {
 
     private final Main plugin;
+    private final Map<UUID, Integer> formIDs = new HashMap<>();
 
     public ServersCommand(Main plugin) {
         super("servers", "Display a list of servers to connect to.", "/servers");
@@ -35,30 +42,54 @@ public class ServersCommand extends Command {
             return true;
         }
 
-        SimpleForm form = new SimpleForm.Builder("Server Selector", "Choose a server to connect to.").build();
-
+        FormWindowSimple form = new FormWindowSimple("Server Selector", "Choose a server to connect to.");
         for (Map<?, ?> serverData : servers) {
-            String name = (String) serverData.get("name");
-            String address = (String) serverData.get("address");
-            int port = (int) serverData.get("port");
+            form.addButton(new ElementButton((String) serverData.get("name")));
+        }
 
-            form.addButton(name, (p, b) -> {
-                if (plugin.getTeleportingPlayers().containsKey(p.getUniqueId())) {
-                    p.sendMessage("You are already being transferred to a server.");
+        int formId = player.showFormWindow(form);
+        formIDs.put(player.getUniqueId(), formId);
+
+        return true;
+    }
+
+    @EventHandler
+    public void onFormResponse(PlayerFormRespondedEvent event) {
+        Player player = event.getPlayer();
+        UUID playerUUID = player.getUniqueId();
+
+        if (formIDs.containsKey(playerUUID) && formIDs.get(playerUUID) == event.getFormID()) {
+            formIDs.remove(playerUUID); // Prevent re-handling
+
+            if (event.getResponse() == null) {
+                return; // Form was closed
+            }
+
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                int buttonIndex = form.getResponse().getClickedButtonId();
+
+                List<Map<?, ?>> servers = plugin.getServers();
+                if (servers == null || buttonIndex >= servers.size()) {
+                    return; // Should not happen
+                }
+
+                Map<?, ?> serverData = servers.get(buttonIndex);
+                String address = (String) serverData.get("address");
+                int port = (int) serverData.get("port");
+
+                if (plugin.getTeleportingPlayers().containsKey(playerUUID)) {
+                    player.sendMessage("You are already being transferred to a server.");
                     return;
                 }
 
-                plugin.getPlayerLocations().put(p.getUniqueId(), p.getLocation());
-                plugin.getTeleportingPlayers().put(p.getUniqueId(), p);
-                CountdownTask task = new CountdownTask(plugin, p, address, port);
+                plugin.getPlayerLocations().put(playerUUID, player.getLocation());
+                plugin.getTeleportingPlayers().put(playerUUID, player);
+                CountdownTask task = new CountdownTask(plugin, player, address, port);
                 plugin.getServer().getScheduler().scheduleRepeatingTask(plugin, task, 20);
-                plugin.getCountdowns().put(p.getUniqueId(), task);
-            });
+                plugin.getCountdowns().put(playerUUID, task);
+            }
         }
-
-        form.send(player);
-
-        return true;
     }
 
     private static class CountdownTask extends PluginTask<Main> {
@@ -77,6 +108,14 @@ public class ServersCommand extends Command {
 
         @Override
         public void onRun(int currentTick) {
+            if (!player.isOnline() || !this.getOwner().getTeleportingPlayers().containsKey(player.getUniqueId())) {
+                this.cancel();
+                this.getOwner().getTeleportingPlayers().remove(player.getUniqueId());
+                this.getOwner().getCountdowns().remove(player.getUniqueId());
+                this.getOwner().getPlayerLocations().remove(player.getUniqueId());
+                return;
+            }
+
             if (countdown > 0) {
                 player.sendTitle("§eTeleporting in " + countdown + "...", "", 0, 25, 5);
                 countdown--;
@@ -88,6 +127,7 @@ public class ServersCommand extends Command {
                 player.dataPacket(pk);
                 this.getOwner().getTeleportingPlayers().remove(player.getUniqueId());
                 this.getOwner().getCountdowns().remove(player.getUniqueId());
+                this.getOwner().getPlayerLocations().remove(player.getUniqueId());
                 this.cancel();
             }
         }

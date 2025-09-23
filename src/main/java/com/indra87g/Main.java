@@ -29,9 +29,12 @@ public class Main extends PluginBase {
         this.servers = serversConfig.getMapList("servers");
 
         getLogger().info("WaffleCoreNK has been enabled.");
+
+        ServersCommand serversCommand = new ServersCommand(this);
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(serversCommand, this);
         this.getServer().getCommandMap().register("setblock", new SetBlockCommand());
-        this.getServer().getCommandMap().register("servers", new ServersCommand(this));
+        this.getServer().getCommandMap().register("servers", serversCommand);
     }
 
     public List<Map<?, ?>> getServers() {

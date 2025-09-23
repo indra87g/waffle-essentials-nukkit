@@ -7,7 +7,7 @@ public class Main extends PluginBase {
 
     @Override
     public void onEnable() {
-        getLogger().info("ContohPlugin has been enabled.");
+        getLogger().info("WaffleCoreNK has been enabled.");
         this.getServer().getCommandMap().register("setblock", new SetBlockCommand());
     }
 }

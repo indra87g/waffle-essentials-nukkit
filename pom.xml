@@ -36,8 +36,8 @@
             <url>https://repo.opencollab.dev/main/</url>
         </repository>
         <repository>
-            <id>luminiadev-repository-releases</id>
-            <url>https://repo.luminiadev.com/releases</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <dependencies>

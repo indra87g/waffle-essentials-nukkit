@@ -1,9 +1,9 @@
-name: ContohPlugin
+name: WaffleCoreNK
 main: com.indra87g.Main
 version: 0.1.0
 api: 1.0.0
 author: indra87g
-description: "Core plugin for the WaffleNK ecosystem."
+description: Core plugin for the WaffleNK ecosystem.
 commands:
   setblock:
     description: "Sets a block at a specific location"

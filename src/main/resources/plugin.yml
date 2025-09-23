@@ -4,3 +4,12 @@ version: 0.1.0
 api: 1.0.0
 author: indra87g
 description: Plugin Nukkit dari GitHub Actions
+commands:
+  setblock:
+    description: "Sets a block at a specific location"
+    usage: "/setblock <x> <y> <z> <block_id>"
+    permission: contohplugin.command.setblock
+permissions:
+  contohplugin.command.setblock:
+    description: "Allows the user to use the /setblock command"
+    default: op

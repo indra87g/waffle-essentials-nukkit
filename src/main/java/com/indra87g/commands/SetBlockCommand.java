@@ -2,31 +2,27 @@ package com.indra87g.commands;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 
-public class SetBlockCommand extends Command {
+public class SetBlockCommand extends BaseCommand {
 
     public SetBlockCommand() {
-        super("setblock", "Sets a block at a specific location", "/setblock <x> <y> <z> <block_id>");
+        super("setblock", "Sets a block at a specific location", "/setblock <x> <y> <z> <block_id>", "waffle.setblock");
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used by a player.");
-            return false;
-        }
-
-        Player player = (Player) sender;
-        Level level = player.getLevel();
-
+    protected boolean validateArgs(String[] args, Player player) {
         if (args.length != 4) {
             player.sendMessage("§cUsage: " + this.getUsage());
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean handleCommand(Player player, String[] args) {
+        Level level = player.getLevel();
 
         try {
             int x = Integer.parseInt(args[0]);

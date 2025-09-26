@@ -1,8 +1,6 @@
 package com.indra87g.commands;
 
 import cn.nukkit.Player;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
@@ -17,25 +15,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ServersCommand extends Command implements Listener {
+public class ServersCommand extends BaseCommand implements Listener {
 
     private final Main plugin;
     private final Map<UUID, Integer> formIDs = new HashMap<>();
 
     public ServersCommand(Main plugin) {
-        super("servers", "Display a list of servers to connect to.", "/servers");
+        super("servers", "Display a list of servers to connect to.", "/servers", "waffle.servers");
         this.plugin = plugin;
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used by a player.");
-            return false;
-        }
-
-        Player player = (Player) sender;
-
+    public boolean handleCommand(Player player, String[] args) {
         List<Map> servers = plugin.getServers();
         if (servers == null || servers.isEmpty()) {
             player.sendMessage("There are no servers available at the moment. Please try again later.");

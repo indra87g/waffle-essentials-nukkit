@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
+import com.indra87g.commands.ClearChatCommand;
 import com.indra87g.commands.ServersCommand;
 import com.indra87g.commands.SetBlockCommand;
 
@@ -35,6 +36,7 @@ public class Main extends PluginBase {
         this.getServer().getPluginManager().registerEvents(serversCommand, this);
         this.getServer().getCommandMap().register("setblock", new SetBlockCommand());
         this.getServer().getCommandMap().register("servers", serversCommand);
+        this.getServer().getCommandMap().register("clearchat", new ClearChatCommand());
     }
 
     public List<Map> getServers() {

@@ -20,8 +20,8 @@ public class ServersCommand extends BaseCommand implements Listener {
     private final Main plugin;
     private final Map<UUID, Integer> formIDs = new HashMap<>();
 
-    public ServersCommand(Main plugin) {
-        super("servers", "Display a list of servers to connect to.", "/servers", "waffle.servers");
+    public ServersCommand(Main plugin, String description) {
+        super("servers", description, "/servers", "waffle.servers");
         this.plugin = plugin;
     }
 

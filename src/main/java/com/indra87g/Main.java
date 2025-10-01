@@ -5,6 +5,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 import com.indra87g.commands.ClearChatCommand;
+import com.indra87g.commands.FastMsgCommand;
 import com.indra87g.commands.ServersCommand;
 import com.indra87g.commands.SetBlockCommand;
 import com.indra87g.util.ConfigManager;
@@ -51,6 +52,11 @@ public class Main extends PluginBase {
         if (configManager.isCommandEnabled("clearchat")) {
             String description = configManager.getCommandDescription("clearchat", "Clear your chat");
             this.getServer().getCommandMap().register("clearchat", new ClearChatCommand(description));
+        }
+
+        if (configManager.isCommandEnabled("fastmsg")) {
+            String description = configManager.getCommandDescription("fastmsg", "Sends a predefined message. Usage: /fastmsg <message_key>");
+            this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager));
         }
 
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);

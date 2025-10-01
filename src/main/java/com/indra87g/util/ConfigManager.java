@@ -27,4 +27,8 @@ public class ConfigManager {
     public String getCommandDescription(String commandName, String defaultDescription) {
         return config.getString("commands." + commandName + ".description", defaultDescription);
     }
+
+    public String getFastMessage(String messageKey) {
+        return config.getString("fast_messages." + messageKey, null);
+    }
 }

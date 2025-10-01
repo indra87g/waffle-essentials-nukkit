@@ -56,7 +56,7 @@ public class Main extends PluginBase {
 
         if (configManager.isCommandEnabled("fastmsg")) {
             String description = configManager.getCommandDescription("fastmsg", "Sends a predefined message. Usage: /fastmsg <message_key>");
-            this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager));
+            this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager, this));
         }
 
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);

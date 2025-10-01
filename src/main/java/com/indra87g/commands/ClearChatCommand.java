@@ -5,8 +5,8 @@ import cn.nukkit.utils.TextFormat;
 
 public class ClearChatCommand extends BaseCommand {
 
-    public ClearChatCommand() {
-        super("clearchat", "Clear your chat", "/clearchat [amount]", "waffle.clear.chat");
+    public ClearChatCommand(String description) {
+        super("clearchat", description, "/clearchat [amount]", "waffle.clear.chat");
     }
 
     @Override

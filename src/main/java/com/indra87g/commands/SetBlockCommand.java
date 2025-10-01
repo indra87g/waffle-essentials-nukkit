@@ -7,8 +7,8 @@ import cn.nukkit.math.Vector3;
 
 public class SetBlockCommand extends BaseCommand {
 
-    public SetBlockCommand() {
-        super("setblock", "Sets a block at a specific location", "/setblock <x> <y> <z> <block_id>", "waffle.setblock");
+    public SetBlockCommand(String description) {
+        super("setblock", description, "/setblock <x> <y> <z> <block_id>", "waffle.setblock");
     }
 
     @Override

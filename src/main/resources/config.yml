@@ -1,0 +1,15 @@
+commands:
+  clearchat:
+    description: "Clear your chat"
+    enabled: true
+  servers:
+    description: "Shows a list of available servers."
+    enabled: true
+  setblock:
+    description: "Sets a block at the player's location. Usage: /setblock <block_id>"
+    enabled: true
+  fastmsg:
+    description: "Sends a predefined message. Usage: /fastmsg <message_key>"
+    enabled: true
+fast_messages:
+  contoh: "Lorem ipsum dolor sit amet"

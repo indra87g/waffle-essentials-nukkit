@@ -4,12 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
-import com.indra87g.commands.ClearChatCommand;
-import com.indra87g.commands.FastMsgCommand;
-import com.indra87g.commands.ServersCommand;
-import com.indra87g.commands.SetBlockCommand;
-import com.indra87g.commands.TimerCommand;
+import com.indra87g.commands.*;
 import com.indra87g.listeners.ConfirmationListener;
+import com.indra87g.listeners.PlayerMoveListener;
 import com.indra87g.util.ConfigManager;
 import com.indra87g.util.ConfirmationManager;
 import com.indra87g.util.TimerManager;
@@ -70,11 +67,11 @@ public class Main extends PluginBase {
 
         if (configManager.isCommandEnabled("timer")) {
             String description = configManager.getCommandDescription("timer", "Sets a timer for messages or commands.");
-            this.getServer().getCommandMap().register("timer", new TimerCommand("timer", description, timerManager, confirmationManager));
+            this.getServer().getCommandMap().register("timer", new TimerCommand(description, timerManager, confirmationManager));
         }
 
         // Register Listeners
-        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
         this.getServer().getPluginManager().registerEvents(new ConfirmationListener(confirmationManager), this);
     }
 

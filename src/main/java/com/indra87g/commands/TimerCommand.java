@@ -1,7 +1,7 @@
 package com.indra87g.commands;
 
 import cn.nukkit.Player;
-import cn.nukkit.command.Command;
+import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.TextFormat;
 import com.indra87g.data.Timer;
@@ -16,26 +16,18 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
-public class TimerCommand extends Command {
+public class TimerCommand extends BaseCommand {
     private final TimerManager timerManager;
     private final ConfirmationManager confirmationManager;
 
-    public TimerCommand(String name, String description, TimerManager timerManager, ConfirmationManager confirmationManager) {
-        super(name, description);
+    public TimerCommand(String description, TimerManager timerManager, ConfirmationManager confirmationManager) {
+        super("timer", description, "/timer <addmsg|addcmd|agenda>", "waffle.timer");
         this.timerManager = timerManager;
         this.confirmationManager = confirmationManager;
-        this.setPermission("waffle.timer.addmsg;waffle.timer.addcmd;waffle.timer.agenda");
-        this.setUsage("/timer <addmsg|addcmd|agenda>");
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used by a player.");
-            return false;
-        }
-
-        Player player = (Player) sender;
+    protected boolean handleCommand(Player player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(TextFormat.RED + "Usage: " + this.getUsage());
             return false;
@@ -58,6 +50,7 @@ public class TimerCommand extends Command {
         }
         return true;
     }
+
 
     private void handleAddMsg(Player player, String[] args) {
         if (!player.hasPermission("waffle.timer.addmsg")) {

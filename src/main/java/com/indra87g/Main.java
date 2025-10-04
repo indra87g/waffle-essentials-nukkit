@@ -4,11 +4,11 @@ import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
-import com.indra87g.commands.ClearChatCommand;
-import com.indra87g.commands.FastMsgCommand;
-import com.indra87g.commands.ServersCommand;
-import com.indra87g.commands.SetBlockCommand;
+import com.indra87g.commands.*;
+import com.indra87g.listeners.ConfirmationListener;
 import com.indra87g.util.ConfigManager;
+import com.indra87g.util.ConfirmationManager;
+import com.indra87g.util.TimerManager;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,6 +19,8 @@ import java.util.UUID;
 public class Main extends PluginBase {
 
     private ConfigManager configManager;
+    private TimerManager timerManager;
+    private ConfirmationManager confirmationManager;
     private List<Map> servers;
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
@@ -28,13 +30,23 @@ public class Main extends PluginBase {
     public void onEnable() {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
+        this.saveResource("timers.yml", false);
+
 
         configManager = new ConfigManager(this);
+        confirmationManager = new ConfirmationManager();
+        timerManager = new TimerManager(this);
+
 
         Config serversConfig = new Config(new File(this.getDataFolder(), "servers.yml"), Config.YAML);
         this.servers = serversConfig.getMapList("servers");
 
         getLogger().info("WaffleCoreNK has been enabled.");
+
+        // Register listeners
+        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new ConfirmationListener(confirmationManager), this);
+
 
         // Register commands based on config
         if (configManager.isCommandEnabled("servers")) {
@@ -59,7 +71,10 @@ public class Main extends PluginBase {
             this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager, this));
         }
 
-        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        if (configManager.isCommandEnabled("timer")) {
+            String description = configManager.getCommandDescription("timer", "Sets a timer to send a message or run a command.");
+            this.getServer().getCommandMap().register("timer", new TimerCommand(description, timerManager, confirmationManager));
+        }
     }
 
     public List<Map> getServers() {

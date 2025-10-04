@@ -1,0 +1,13 @@
+/app/src/main/java/com/indra87g/util/ConfigManager.java
+/app/src/main/java/com/indra87g/commands/FastMsgCommand.java
+/app/src/main/java/com/indra87g/util/ConfirmationManager.java
+/app/src/main/java/com/indra87g/commands/TimerCommand.java
+/app/src/main/java/com/indra87g/commands/BaseCommand.java
+/app/src/main/java/com/indra87g/commands/ClearChatCommand.java
+/app/src/main/java/com/indra87g/util/TimerManager.java
+/app/src/main/java/com/indra87g/commands/SetBlockCommand.java
+/app/src/main/java/com/indra87g/listeners/ConfirmationListener.java
+/app/src/main/java/com/indra87g/Main.java
+/app/src/main/java/com/indra87g/util/Timer.java
+/app/src/main/java/com/indra87g/commands/ServersCommand.java
+/app/src/main/java/com/indra87g/listeners/PlayerMoveListener.java

@@ -1,0 +1,10 @@
+servers:
+  - name: "Lobby"
+    address: "lobby.example.com"
+    port: 19132
+  - name: "Survival"
+    address: "survival.example.com"
+    port: 19133
+  - name: "Creative"
+    address: "creative.example.com"
+    port: 19134

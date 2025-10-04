@@ -8,7 +8,11 @@ import com.indra87g.commands.ClearChatCommand;
 import com.indra87g.commands.FastMsgCommand;
 import com.indra87g.commands.ServersCommand;
 import com.indra87g.commands.SetBlockCommand;
+import com.indra87g.commands.TimerCommand;
+import com.indra87g.listeners.ConfirmationListener;
 import com.indra87g.util.ConfigManager;
+import com.indra87g.util.ConfirmationManager;
+import com.indra87g.util.TimerManager;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,6 +23,8 @@ import java.util.UUID;
 public class Main extends PluginBase {
 
     private ConfigManager configManager;
+    private TimerManager timerManager;
+    private ConfirmationManager confirmationManager;
     private List<Map> servers;
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
@@ -28,8 +34,11 @@ public class Main extends PluginBase {
     public void onEnable() {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
+        this.saveResource("timers.yml", false);
 
         configManager = new ConfigManager(this);
+        timerManager = new TimerManager(this);
+        confirmationManager = new ConfirmationManager();
 
         Config serversConfig = new Config(new File(this.getDataFolder(), "servers.yml"), Config.YAML);
         this.servers = serversConfig.getMapList("servers");
@@ -59,7 +68,14 @@ public class Main extends PluginBase {
             this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager, this));
         }
 
+        if (configManager.isCommandEnabled("timer")) {
+            String description = configManager.getCommandDescription("timer", "Sets a timer for messages or commands.");
+            this.getServer().getCommandMap().register("timer", new TimerCommand("timer", description, timerManager, confirmationManager));
+        }
+
+        // Register Listeners
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new ConfirmationListener(confirmationManager), this);
     }
 
     public List<Map> getServers() {

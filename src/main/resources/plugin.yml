@@ -1,13 +1,38 @@
 name: WaffleCoreNK
 main: com.indra87g.Main
-version: 0.1.0
-api: 1.0.0
+version: 0.1.2
+api: ["1.0.0"]
 author: indra87g
-description: Core plugin for the WaffleNK ecosystem.
+commands:
+  servers:
+    description: "Shows a list of available servers."
+    permission: waffle.servers
+  setblock:
+    description: "Sets a block at the player's location."
+    permission: waffle.setblock
+  clearchat:
+    description: "Clear your chat"
+    permission: waffle.clearchat
+  fastmsg:
+    description: "Sends a predefined message."
+    permission: waffle.fastmsg
+  timer:
+    description: "Sets a timer for messages or commands."
+    permission: waffle.timer
 permissions:
-  waffle.setblock:
-    description: "Allows the user to use the /setblock command"
-    default: op
   waffle.servers:
-    description: "Allows the user to use the /servers command"
+    default: true
+  waffle.setblock:
+    default: op
+  waffle.clearchat:
+    default: true
+  waffle.fastmsg:
+    default: true
+  waffle.timer:
+    default: true
+  waffle.timer.addmsg:
+    default: true
+  waffle.timer.addcmd:
+    default: op
+  waffle.timer.agenda:
     default: true

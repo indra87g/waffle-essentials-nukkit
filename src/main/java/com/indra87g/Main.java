@@ -6,6 +6,7 @@ import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 import com.indra87g.commands.ClearChatCommand;
 import com.indra87g.commands.FastMsgCommand;
+import com.indra87g.commands.MeCommand;
 import com.indra87g.commands.ServersCommand;
 import com.indra87g.commands.SetBlockCommand;
 import com.indra87g.util.ConfigManager;
@@ -57,6 +58,11 @@ public class Main extends PluginBase {
         if (configManager.isCommandEnabled("fastmsg")) {
             String description = configManager.getCommandDescription("fastmsg", "Sends a predefined message. Usage: /fastmsg <message_key>");
             this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager, this));
+        }
+
+        if (configManager.isCommandEnabled("me")) {
+            String description = configManager.getCommandDescription("me", "Shows your player information");
+            this.getServer().getCommandMap().register("me", new MeCommand(description));
         }
 
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);

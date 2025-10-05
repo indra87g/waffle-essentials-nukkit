@@ -11,3 +11,6 @@ permissions:
   waffle.servers:
     description: "Allows the user to use the /servers command"
     default: true
+  waffle.me:
+    description: "Allows the user to use the /me command"
+    default: true

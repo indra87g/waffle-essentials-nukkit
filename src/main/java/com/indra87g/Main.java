@@ -1,13 +1,11 @@
 package com.indra87g;
 
 import cn.nukkit.Player;
+import cn.nukkit.command.Command;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
-import com.indra87g.commands.ClearChatCommand;
-import com.indra87g.commands.FastMsgCommand;
-import com.indra87g.commands.ServersCommand;
-import com.indra87g.commands.SetBlockCommand;
+import com.indra87g.commands.*;
 import com.indra87g.util.ConfigManager;
 
 import java.io.File;
@@ -15,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class Main extends PluginBase {
 
@@ -36,7 +35,13 @@ public class Main extends PluginBase {
 
         getLogger().info("WaffleCoreNK has been enabled.");
 
-        // Register commands based on config
+        registerCommands();
+
+        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+    }
+
+    private void registerCommands() {
+        // Commands with special registration logic
         if (configManager.isCommandEnabled("servers")) {
             String description = configManager.getCommandDescription("servers", "Shows a list of available servers.");
             ServersCommand serversCommand = new ServersCommand(this, description);
@@ -44,22 +49,22 @@ public class Main extends PluginBase {
             this.getServer().getCommandMap().register("servers", serversCommand);
         }
 
-        if (configManager.isCommandEnabled("setblock")) {
-            String description = configManager.getCommandDescription("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>");
-            this.getServer().getCommandMap().register("setblock", new SetBlockCommand(description));
-        }
-
-        if (configManager.isCommandEnabled("clearchat")) {
-            String description = configManager.getCommandDescription("clearchat", "Clear your chat");
-            this.getServer().getCommandMap().register("clearchat", new ClearChatCommand(description));
-        }
-
         if (configManager.isCommandEnabled("fastmsg")) {
             String description = configManager.getCommandDescription("fastmsg", "Sends a predefined message. Usage: /fastmsg <message_key>");
             this.getServer().getCommandMap().register("fastmsg", new FastMsgCommand(description, configManager, this));
         }
 
-        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        // Simple commands that only need a description
+        registerSimpleCommand("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>", SetBlockCommand::new);
+        registerSimpleCommand("clearchat", "Clear your chat", ClearChatCommand::new);
+        registerSimpleCommand("me", "Shows your player information", MeCommand::new);
+    }
+
+    private void registerSimpleCommand(String name, String defaultDescription, Function<String, Command> constructor) {
+        if (configManager.isCommandEnabled(name)) {
+            String description = configManager.getCommandDescription(name, defaultDescription);
+            this.getServer().getCommandMap().register(name, constructor.apply(description));
+        }
     }
 
     public List<Map> getServers() {

@@ -1,6 +1,6 @@
 name: WaffleCoreNK
 main: com.indra87g.Main
-version: 0.1.0
+version: "${pom.version}"
 api: 1.0.0
 author: indra87g
 description: Core plugin for the WaffleNK ecosystem.

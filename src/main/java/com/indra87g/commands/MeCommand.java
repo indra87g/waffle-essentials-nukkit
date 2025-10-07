@@ -23,15 +23,15 @@ public class MeCommand extends BaseCommand {
         String respawnPoint = String.format("X: %.2f, Y: %.2f, Z: %.2f, World: %s",
                 respawn.getX(), respawn.getY(), respawn.getZ(), respawn.getLevel().getName());
 
-        String meInfo = "====================\n" +
+        String myInfo = "====================\n" +
                 TextFormat.AQUA + playerName + TextFormat.WHITE + " Level " + TextFormat.YELLOW + playerLevel + "\n" +
                 TextFormat.WHITE + "HP: " + TextFormat.RED + playerHealth + "\n" +
                 TextFormat.WHITE + "Hunger: " + TextFormat.GOLD + playerFood + "\n" +
                 TextFormat.WHITE + "XP: " + TextFormat.GREEN + playerExperience + "/" + xpToLevelUp + "\n" +
                 TextFormat.WHITE + "Respawn Point: " + TextFormat.LIGHT_PURPLE + respawnPoint + "\n" +
-                "====================";
+                TextFormat.WHITE + "====================";
 
-        player.sendMessage(meInfo);
+        player.sendMessage(myInfo);
         return true;
     }
 }

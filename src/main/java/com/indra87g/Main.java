@@ -57,7 +57,7 @@ public class Main extends PluginBase {
         // Simple commands that only need a description
         registerSimpleCommand("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>", SetBlockCommand::new);
         registerSimpleCommand("clearchat", "Clear your chat", ClearChatCommand::new);
-        registerSimpleCommand("me", "Shows your player information", MeCommand::new);
+        registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, Function<String, Command> constructor) {

@@ -11,6 +11,13 @@ permissions:
   waffle.servers:
     description: "Allows the user to use the /servers command"
     default: true
-  waffle.me:
-    description: "Allows the user to use the /me command"
+  waffle.info:
+    description: "Allows the user to use the /info command"
     default: true
+    children:
+      waffle.info.me:
+        description: "Allows the user to use the /info me command"
+        default: true
+      waffle.info.server:
+        description: "Allows the user to use the /info server command"
+        default: true

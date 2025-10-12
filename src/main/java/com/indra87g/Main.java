@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Main extends PluginBase {
@@ -22,6 +23,7 @@ public class Main extends PluginBase {
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
     private final Map<UUID, cn.nukkit.level.Location> playerLocations = new HashMap<>();
+    private boolean economyAPIAvailable = false;
 
     @Override
     public void onEnable() {
@@ -35,9 +37,19 @@ public class Main extends PluginBase {
 
         getLogger().info("WaffleCoreNK has been enabled.");
 
+        checkEconomyAPI();
         registerCommands();
 
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+    }
+
+    private void checkEconomyAPI() {
+        if (getServer().getPluginManager().getPlugin("EconomyAPI") != null) {
+            economyAPIAvailable = true;
+            getLogger().info("[WaffleCoreNK] EconomyAPI is already installed on the server, allowing it to be integrated with this plugin.");
+        } else {
+            getLogger().info("[WaffleCoreNK] EconomyAPI is not installed. Some functionality of this plugin may be impaired.");
+        }
     }
 
     private void registerCommands() {
@@ -55,15 +67,15 @@ public class Main extends PluginBase {
         }
 
         // Simple commands that only need a description
-        registerSimpleCommand("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>", SetBlockCommand::new);
-        registerSimpleCommand("clearchat", "Clear your chat", ClearChatCommand::new);
+        registerSimpleCommand("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>", (desc, main) -> new SetBlockCommand(desc));
+        registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
     }
 
-    private void registerSimpleCommand(String name, String defaultDescription, Function<String, Command> constructor) {
+    private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {
         if (configManager.isCommandEnabled(name)) {
             String description = configManager.getCommandDescription(name, defaultDescription);
-            this.getServer().getCommandMap().register(name, constructor.apply(description));
+            this.getServer().getCommandMap().register(name, constructor.apply(description, this));
         }
     }
 
@@ -81,5 +93,9 @@ public class Main extends PluginBase {
 
     public Map<UUID, cn.nukkit.level.Location> getPlayerLocations() {
         return playerLocations;
+    }
+
+    public boolean isEconomyAPIAvailable() {
+        return economyAPIAvailable;
     }
 }

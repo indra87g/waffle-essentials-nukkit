@@ -74,7 +74,7 @@ public class InfoCommand extends BaseCommand {
         double freeMemory = runtime.freeMemory() / 1024.0 / 1024.0 / 1024.0;
         double usedMemory = totalMemory - freeMemory;
 
-        String serverInfo = "============\n" +
+        String serverInfo = "====================\n" +
                 String.format("RAM Usage: %.2fGB/%.2fGB\n", usedMemory, maxMemory) +
                 "CPU Usage: " + String.format("%.2f", server.getTickUsage()) + "%/100%\n" +
                 "Player Online: " + server.getOnlinePlayers().size() + "/" + server.getMaxPlayers() + "\n" +
@@ -83,7 +83,7 @@ public class InfoCommand extends BaseCommand {
                 "IP: " + server.getIp() + "\n" +
                 "Port: " + server.getPort() + "\n" +
                 "MOTD: " + server.getMotd() + "\n" +
-                "=============";
+                "====================";
 
         player.sendMessage(serverInfo);
     }

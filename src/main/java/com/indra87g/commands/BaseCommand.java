@@ -13,9 +13,15 @@ public abstract class BaseCommand extends Command {
         this.setPermission(permission);
     }
 
+    public BaseCommand(String name, String description, String usage) {
+        super(name);
+        this.setDescription(description);
+        this.setUsage(usage);
+    }
+
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!this.testPermission(sender)) {
+        if (this.getPermission() != null && !this.testPermission(sender)) {
             sender.sendMessage("You do not have permission to use this command.");
             return false;
         }

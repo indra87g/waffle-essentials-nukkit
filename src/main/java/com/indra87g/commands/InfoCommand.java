@@ -4,11 +4,16 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
+import com.indra87g.Main;
+import me.onebone.economyapi.EconomyAPI;
 
 public class InfoCommand extends BaseCommand {
 
-    public InfoCommand(String description) {
-        super("info", description, "/info <me|server>", "waffle.info");
+    private final Main plugin;
+
+    public InfoCommand(String description, Main plugin) {
+        super("info", description, "/info <player|server|playerpp>");
+        this.plugin = plugin;
     }
 
     @Override
@@ -19,8 +24,8 @@ public class InfoCommand extends BaseCommand {
         }
 
         switch (args[0].toLowerCase()) {
-            case "me":
-                if (!player.hasPermission("waffle.info.me")) {
+            case "player":
+                if (!player.hasPermission("waffle.info.player")) {
                     player.sendMessage(TextFormat.RED + "You don't have permission to use this command.");
                     return false;
                 }
@@ -33,6 +38,17 @@ public class InfoCommand extends BaseCommand {
                 }
                 sendServerInfo(player);
                 break;
+            case "playerpp":
+                if (!plugin.isEconomyAPIAvailable()) {
+                    player.sendMessage(TextFormat.RED + "EconomyAPI is not installed on the server.");
+                    return false;
+                }
+                if (!player.hasPermission("waffle.info.playerpp")) {
+                    player.sendMessage(TextFormat.RED + "You don't have permission to use this command.");
+                    return false;
+                }
+                sendPlayerPpInfo(player);
+                break;
             default:
                 sendUsage(player);
                 return false;
@@ -41,6 +57,10 @@ public class InfoCommand extends BaseCommand {
     }
 
     private void sendPlayerInfo(Player player) {
+        sendPlayerInfo(player, -1);
+    }
+
+    private void sendPlayerInfo(Player player, double money) {
         String playerName = player.getName();
         int playerLevel = player.getExperienceLevel();
         double playerHealth = player.getHealth();
@@ -53,16 +73,20 @@ public class InfoCommand extends BaseCommand {
         String respawnPoint = String.format("X: %.2f, Y: %.2f, Z: %.2f, World: %s",
                 respawn.getX(), respawn.getY(), respawn.getZ(), respawn.getLevel().getName());
 
-        String myInfo = "====================\n" +
-                TextFormat.AQUA + playerName + TextFormat.WHITE + " Level " + TextFormat.YELLOW + playerLevel + "\n" +
-                TextFormat.WHITE + "HP: " + TextFormat.RED + playerHealth + "\n" +
-                TextFormat.WHITE + "Hunger: " + TextFormat.GOLD + playerFood + "\n" +
-                TextFormat.WHITE + "XP: " + TextFormat.GREEN + playerExperience + "/" + xpToLevelUp + "\n" +
-                TextFormat.WHITE + "Ping: " + TextFormat.AQUA + ping + "ms\n" +
-                TextFormat.WHITE + "Respawn Point: " + TextFormat.LIGHT_PURPLE + respawnPoint + "\n" +
-                TextFormat.WHITE + "====================";
+        StringBuilder myInfo = new StringBuilder();
+        myInfo.append("====================\n");
+        myInfo.append(TextFormat.AQUA).append(playerName).append(TextFormat.WHITE).append(" Level ").append(TextFormat.YELLOW).append(playerLevel).append("\n");
+        myInfo.append(TextFormat.WHITE).append("HP: ").append(TextFormat.RED).append(playerHealth).append("\n");
+        myInfo.append(TextFormat.WHITE).append("Hunger: ").append(TextFormat.GOLD).append(playerFood).append("\n");
+        myInfo.append(TextFormat.WHITE).append("XP: ").append(TextFormat.GREEN).append(playerExperience).append("/").append(xpToLevelUp).append("\n");
+        if (money != -1) {
+            myInfo.append(TextFormat.WHITE).append("Money: ").append(TextFormat.GOLD).append(String.format("%.2f", money)).append("\n");
+        }
+        myInfo.append(TextFormat.WHITE).append("Ping: ").append(TextFormat.AQUA).append(ping).append("ms\n");
+        myInfo.append(TextFormat.WHITE).append("Respawn Point: ").append(TextFormat.LIGHT_PURPLE).append(respawnPoint).append("\n");
+        myInfo.append(TextFormat.WHITE).append("====================");
 
-        player.sendMessage(myInfo);
+        player.sendMessage(myInfo.toString());
     }
 
     private void sendServerInfo(Player player) {
@@ -75,17 +99,22 @@ public class InfoCommand extends BaseCommand {
         double usedMemory = totalMemory - freeMemory;
 
         String serverInfo = "====================\n" +
-                String.format("RAM Usage: %.2fGB/%.2fGB\n", usedMemory, maxMemory) +
-                "CPU Usage: " + String.format("%.2f", server.getTickUsage()) + "%/100%\n" +
-                "Player Online: " + server.getOnlinePlayers().size() + "/" + server.getMaxPlayers() + "\n" +
-                "TPS: " + server.getTicksPerSecond() + "\n" +
+                TextFormat.WHITE + "RAM Usage: " + TextFormat.GREEN + String.format("%.2fGB/%.2fGB\n", usedMemory, maxMemory) +
+                TextFormat.WHITE + "CPU Usage: " + TextFormat.YELLOW + String.format("%.2f", server.getTickUsage()) + "%/100%\n" +
+                TextFormat.WHITE + "Player Online: " + TextFormat.AQUA + server.getOnlinePlayers().size() + "/" + server.getMaxPlayers() + "\n" +
+                TextFormat.WHITE + "TPS: " + TextFormat.GOLD + server.getTicksPerSecond() + "\n" +
                 "\n" +
-                "IP: " + server.getIp() + "\n" +
-                "Port: " + server.getPort() + "\n" +
-                "MOTD: " + server.getMotd() + "\n" +
+                TextFormat.WHITE + "IP: " + TextFormat.LIGHT_PURPLE + server.getIp() + "\n" +
+                TextFormat.WHITE + "Port: " + TextFormat.LIGHT_PURPLE + server.getPort() + "\n" +
+                TextFormat.WHITE + "MOTD: " + TextFormat.GRAY + server.getMotd() + "\n" +
                 "====================";
 
         player.sendMessage(serverInfo);
+    }
+
+    private void sendPlayerPpInfo(Player player) {
+        double money = EconomyAPI.getInstance().myMoney(player);
+        sendPlayerInfo(player, money);
     }
 
     private void sendUsage(Player player) {

@@ -29,6 +29,7 @@ public class Main extends PluginBase {
     public void onEnable() {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
+        this.saveResource("redeem_codes.yml");
 
         configManager = new ConfigManager(this);
 

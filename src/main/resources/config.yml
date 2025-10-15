@@ -11,9 +11,12 @@ commands:
   fastmsg:
     description: "Sends a predefined message. Usage: /fastmsg <message_key>"
     enabled: true
-  me:
+  info:
     description: "Shows your player information"
     enabled: true
-    
+  redeem:
+    description: "Redeem a code for a reward"
+    enabled: true
+
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"

@@ -70,6 +70,7 @@ public class Main extends PluginBase {
         registerSimpleCommand("setblock", "Sets a block at the player's location. Usage: /setblock <block_id>", (desc, main) -> new SetBlockCommand(desc));
         registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
+        registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {

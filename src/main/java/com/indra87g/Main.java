@@ -47,9 +47,9 @@ public class Main extends PluginBase {
     private void checkEconomyAPI() {
         if (getServer().getPluginManager().getPlugin("EconomyAPI") != null) {
             economyAPIAvailable = true;
-            getLogger().info("[WaffleCoreNK] EconomyAPI is already installed on the server, allowing it to be integrated with this plugin.");
+            getLogger().info("EconomyAPI is already installed on the server, allowing it to be integrated with this plugin.");
         } else {
-            getLogger().info("[WaffleCoreNK] EconomyAPI is not installed. Some functionality of this plugin may be impaired.");
+            getLogger().info("EconomyAPI is not installed. Some functionality of this plugin may be impaired.");
         }
     }
 

@@ -1,0 +1,6 @@
+# This file stores the data of players who have redeemed codes.
+# The format is as follows:
+#
+# player_uuid:
+#   - redeemed_code_1
+#   - redeemed_code_2

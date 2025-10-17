@@ -2,6 +2,8 @@ package com.indra87g.commands;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemShield;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
 import com.indra87g.Main;
@@ -12,7 +14,7 @@ public class InfoCommand extends BaseCommand {
     private final Main plugin;
 
     public InfoCommand(String description, Main plugin) {
-        super("info", description, "/info <player|server|playerpp>");
+        super("info", description, "/info <player|server|item>");
         this.plugin = plugin;
     }
 
@@ -29,7 +31,11 @@ public class InfoCommand extends BaseCommand {
                     player.sendMessage(TextFormat.RED + "You don't have permission to use this command.");
                     return false;
                 }
-                sendPlayerInfo(player);
+                if (plugin.isEconomyAPIAvailable()) {
+                    sendPlayerInfo(player, EconomyAPI.getInstance().myMoney(player));
+                } else {
+                    sendPlayerInfo(player, -1);
+                }
                 break;
             case "server":
                 if (!player.hasPermission("waffle.info.server")) {
@@ -38,26 +44,18 @@ public class InfoCommand extends BaseCommand {
                 }
                 sendServerInfo(player);
                 break;
-            case "playerpp":
-                if (!plugin.isEconomyAPIAvailable()) {
-                    player.sendMessage(TextFormat.RED + "EconomyAPI is not installed on the server.");
-                    return false;
-                }
-                if (!player.hasPermission("waffle.info.playerpp")) {
+            case "item":
+                if (!player.hasPermission("waffle.info.item")) {
                     player.sendMessage(TextFormat.RED + "You don't have permission to use this command.");
                     return false;
                 }
-                sendPlayerPpInfo(player);
+                sendItemInfo(player);
                 break;
             default:
                 sendUsage(player);
                 return false;
         }
         return true;
-    }
-
-    private void sendPlayerInfo(Player player) {
-        sendPlayerInfo(player, -1);
     }
 
     private void sendPlayerInfo(Player player, double money) {
@@ -112,12 +110,41 @@ public class InfoCommand extends BaseCommand {
         player.sendMessage(serverInfo);
     }
 
-    private void sendPlayerPpInfo(Player player) {
-        double money = EconomyAPI.getInstance().myMoney(player);
-        sendPlayerInfo(player, money);
-    }
-
     private void sendUsage(Player player) {
         player.sendMessage(TextFormat.RED + "Usage: " + getUsage());
+    }
+
+    private void sendItemInfo(Player player) {
+        StringBuilder itemInfo = new StringBuilder();
+        itemInfo.append("====================\n");
+        itemInfo.append(TextFormat.AQUA).append("Hotbar:\n");
+
+        for (int i = 0; i < 9; i++) {
+            Item item = player.getInventory().getItem(i);
+            if (item.getId() != Item.AIR) {
+                itemInfo.append(TextFormat.WHITE).append(i + 1).append(". ").append(item.getName()).append(" (").append(item.getId()).append(")");
+                if (item.getMaxStackSize() > 1) {
+                    itemInfo.append(" x").append(item.getCount());
+                }
+                itemInfo.append("\n");
+            }
+        }
+
+        itemInfo.append(TextFormat.AQUA).append("Attachment:\n");
+        Item[] armor = player.getInventory().getArmorContents();
+        String[] armorSlotNames = {"Helmet", "Chestplate", "Leggings", "Boots"};
+        for (int i = 0; i < armor.length; i++) {
+            Item item = armor[i];
+            if (item.getId() != Item.AIR) {
+                itemInfo.append(TextFormat.WHITE).append(armorSlotNames[i]).append(": ").append(item.getName()).append(" (").append(item.getId()).append(")\n");
+            }
+        }
+        for (Item item : player.getInventory().getContents().values()) {
+            if (item instanceof cn.nukkit.item.ItemShield) {
+                itemInfo.append(TextFormat.WHITE).append("Shield: ").append(item.getName()).append(" (").append(item.getId()).append(")\n");
+            }
+        }
+        itemInfo.append("====================");
+        player.sendMessage(itemInfo.toString());
     }
 }

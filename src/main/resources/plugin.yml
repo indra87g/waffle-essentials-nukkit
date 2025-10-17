@@ -21,3 +21,6 @@ permissions:
       waffle.info.server:
         description: "Allows the user to use the /info server command"
         default: true
+      waffle.info.item:
+        description: "Allows the user to use the /info item command"
+        default: true

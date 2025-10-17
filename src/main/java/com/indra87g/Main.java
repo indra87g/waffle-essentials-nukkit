@@ -47,9 +47,9 @@ public class Main extends PluginBase {
     private void checkEconomyAPI() {
         if (getServer().getPluginManager().getPlugin("EconomyAPI") != null) {
             economyAPIAvailable = true;
-            getLogger().info("EconomyAPI is already installed on the server, allowing it to be integrated with this plugin.");
+            getLogger().info("EconomyAPI integration enabled!");
         } else {
-            getLogger().info("EconomyAPI is not installed. Some functionality of this plugin may be impaired.");
+            getLogger().info("EconomyAPI integration disabled!");
         }
     }
 

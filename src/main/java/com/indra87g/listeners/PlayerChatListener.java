@@ -6,7 +6,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerChatEvent;
 import com.indra87g.Main;
 import com.indra87g.util.ConfigManager;
-import coins.Coins;
+import angga7togk.coins.Coins;
 
 import java.util.HashMap;
 import java.util.Map;

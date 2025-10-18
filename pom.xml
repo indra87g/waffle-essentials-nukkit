@@ -58,7 +58,8 @@
             <groupId>com.github.angga7togk</groupId>
             <artifactId>CoinsAPI-NK</artifactId>
             <version>1.0.0</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/coinsapi.jar</systemPath>
         </dependency>
     </dependencies>
     <properties>

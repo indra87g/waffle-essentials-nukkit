@@ -3,7 +3,7 @@ package com.indra87g.commands;
 import cn.nukkit.Player;
 import com.indra87g.Main;
 import com.indra87g.util.ConfigManager;
-import coins.Coins;
+import angga7togk.coins.Coins;
 import me.onebone.economyapi.EconomyAPI;
 
 public class ConvertCoinCommand extends BaseCommand {

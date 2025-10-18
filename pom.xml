@@ -35,6 +35,10 @@
             <id>nukkitx</id>
             <url>https://repo.opencollab.dev/main/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -49,6 +53,12 @@
             <version>2.0.5</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/economyapi.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.angga7togk</groupId>
+            <artifactId>CoinsAPI-NK</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <properties>

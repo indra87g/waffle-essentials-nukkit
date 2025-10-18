@@ -6,6 +6,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 import com.indra87g.commands.*;
+import com.indra87g.listeners.PlayerChatListener;
 import com.indra87g.util.ConfigManager;
 
 import java.io.File;
@@ -24,6 +25,7 @@ public class Main extends PluginBase {
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
     private final Map<UUID, cn.nukkit.level.Location> playerLocations = new HashMap<>();
     private boolean economyAPIAvailable = false;
+    private boolean coinsAPIAvailable = false;
 
     @Override
     public void onEnable() {
@@ -39,9 +41,9 @@ public class Main extends PluginBase {
         getLogger().info("WaffleCoreNK has been enabled.");
 
         checkEconomyAPI();
+        checkCoinsAPI();
         registerCommands();
-
-        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        registerListeners();
     }
 
     private void checkEconomyAPI() {
@@ -50,6 +52,15 @@ public class Main extends PluginBase {
             getLogger().info("EconomyAPI integration enabled!");
         } else {
             getLogger().info("EconomyAPI integration disabled!");
+        }
+    }
+
+    private void checkCoinsAPI() {
+        if (getServer().getPluginManager().getPlugin("CoinsAPI") != null) {
+            coinsAPIAvailable = true;
+            getLogger().info("CoinsAPI integration enabled!");
+        } else {
+            getLogger().info("CoinsAPI integration disabled!");
         }
     }
 
@@ -72,6 +83,12 @@ public class Main extends PluginBase {
         registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
         registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
+        registerSimpleCommand("convertcoin", "Convert coins to money", (desc, main) -> new ConvertCoinCommand(desc, main));
+    }
+
+    private void registerListeners() {
+        this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerChatListener(this), this);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {
@@ -99,5 +116,9 @@ public class Main extends PluginBase {
 
     public boolean isEconomyAPIAvailable() {
         return economyAPIAvailable;
+    }
+
+    public boolean isCoinsAPIAvailable() {
+        return coinsAPIAvailable;
     }
 }

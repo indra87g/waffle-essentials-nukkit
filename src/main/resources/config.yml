@@ -17,6 +17,22 @@ commands:
   redeem:
     description: "Redeem a code for a reward"
     enabled: true
+  convertcoin:
+    description: "Convert coins to money"
+    enabled: true
 
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"
+
+chat_to_coin:
+  enabled: true
+  chat_count: 10
+  min_message_length: 5
+  min_coins: 1
+  max_coins: 3
+
+coin_conversion:
+  enabled: true
+  rate:
+    coins: 10
+    money: 500

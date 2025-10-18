@@ -31,4 +31,36 @@ public class ConfigManager {
     public String getFastMessage(String messageKey) {
         return config.getString("fast_messages." + messageKey, null);
     }
+
+    public boolean isChatToCoinEnabled() {
+        return config.getBoolean("chat_to_coin.enabled", true);
+    }
+
+    public int getChatCount() {
+        return config.getInt("chat_to_coin.chat_count", 10);
+    }
+
+    public int getMinMessageLength() {
+        return config.getInt("chat_to_coin.min_message_length", 5);
+    }
+
+    public int getMinCoins() {
+        return config.getInt("chat_to_coin.min_coins", 1);
+    }
+
+    public int getMaxCoins() {
+        return config.getInt("chat_to_coin.max_coins", 3);
+    }
+
+    public boolean isCoinConversionEnabled() {
+        return config.getBoolean("coin_conversion.enabled", true);
+    }
+
+    public int getConversionRateCoins() {
+        return config.getInt("coin_conversion.rate.coins", 10);
+    }
+
+    public int getConversionRateMoney() {
+        return config.getInt("coin_conversion.rate.money", 500);
+    }
 }

@@ -30,6 +30,7 @@ public class Main extends PluginBase {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
         this.saveResource("redeem_codes.yml");
+        this.saveResource("wshop.yml");
 
         configManager = new ConfigManager(this);
 
@@ -72,6 +73,7 @@ public class Main extends PluginBase {
         registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
         registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
+        registerSimpleCommand("wbuy", "Buy a command from the shop", WbuyCommand::new);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {

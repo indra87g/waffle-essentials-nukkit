@@ -17,6 +17,9 @@ commands:
   redeem:
     description: "Redeem a code for a reward"
     enabled: true
+  wbuy:
+    description: "Buy a command from the shop"
+    enabled: true
 
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"

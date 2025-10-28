@@ -74,6 +74,7 @@ public class Main extends PluginBase {
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
         registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
         registerSimpleCommand("wbuy", "Buy a command from the shop", WbuyCommand::new);
+        registerSimpleCommand("near", "Shows nearby players", NearCommand::new);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {

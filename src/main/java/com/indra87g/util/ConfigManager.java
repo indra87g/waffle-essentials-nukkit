@@ -31,4 +31,8 @@ public class ConfigManager {
     public String getFastMessage(String messageKey) {
         return config.getString("fast_messages." + messageKey, null);
     }
+
+    public int getNearDetectionRadius() {
+        return config.getInt("commands.near.nearDetectionRadius", 100);
+    }
 }

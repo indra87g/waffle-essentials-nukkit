@@ -9,7 +9,17 @@ commands:
     description: "Shows nearby players"
     usage: "/near"
     permission: waffle.near
+  wbuy:
+    description: "Buy items from the shop"
+    usage: "/wbuy"
+    permission: waffle.wbuy
 permissions:
+  waffle.wbuy:
+    description: "Allows the user to use the /wbuy command"
+    default: true
+  waffle.wbuy.restock:
+    description: "Allows the user to use the /wbuy restock command"
+    default: op
   waffle.near:
     description: "Allows the user to use the /near command"
     default: op

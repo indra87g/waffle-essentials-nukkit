@@ -3,3 +3,4 @@ wshop:
         mycommand:
             execute: "enchant %p silk_touch"
             price: 1500
+            stock: 10

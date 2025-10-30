@@ -1,0 +1,5 @@
+commands:
+    mycommand:
+        name: "My Command"
+        execute: "ce %p% viper"
+        price: 2000

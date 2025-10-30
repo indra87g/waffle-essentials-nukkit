@@ -5,11 +5,18 @@ api: 1.0.0
 author: indra87g
 description: Core plugin for the WaffleNK ecosystem.
 commands:
+  buyc:
+    description: "Purchase commands using in-game currency"
+    usage: "/buyc"
+    permission: waffle.buyc
   near:
     description: "Shows nearby players"
     usage: "/near"
     permission: waffle.near
 permissions:
+  waffle.buyc:
+    description: "Allows the user to use the /buyc command"
+    default: true
   waffle.near:
     description: "Allows the user to use the /near command"
     default: op

@@ -30,7 +30,7 @@ public class Main extends PluginBase {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
         this.saveResource("redeem_codes.yml");
-        this.saveResource("wshop.yml");
+        this.saveResource("buyc.yml");
 
         configManager = new ConfigManager(this);
 
@@ -73,15 +73,21 @@ public class Main extends PluginBase {
         registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
         registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
-        registerSimpleCommand("wbuy", "Buy a command from the shop", WbuyCommand::new);
+        Command buyc = registerSimpleCommand("buyc", "Buy a command from the shop", BuycCommand::new);
+        if (buyc instanceof BuycCommand) {
+            this.getServer().getPluginManager().registerEvents((BuycCommand) buyc, this);
+        }
         registerSimpleCommand("near", "Shows nearby players", NearCommand::new);
     }
 
-    private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {
+    private Command registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {
         if (configManager.isCommandEnabled(name)) {
             String description = configManager.getCommandDescription(name, defaultDescription);
-            this.getServer().getCommandMap().register(name, constructor.apply(description, this));
+            Command command = constructor.apply(description, this);
+            this.getServer().getCommandMap().register(name, command);
+            return command;
         }
+        return null;
     }
 
     public List<Map> getServers() {

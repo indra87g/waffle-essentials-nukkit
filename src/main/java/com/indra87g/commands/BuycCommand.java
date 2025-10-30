@@ -9,15 +9,15 @@ import me.onebone.economyapi.EconomyAPI;
 import java.io.File;
 import java.util.Map;
 
-public class WbuyCommand extends BaseCommand {
+public class BuycCommand extends BaseCommand {
 
     private final Main plugin;
-    private final Config wshopConfig;
+    private final Config buycConfig;
 
-    public WbuyCommand(String description, Main plugin) {
-        super("wbuy", description, "/wbuy command <identifier>");
+    public BuycCommand(String description, Main plugin) {
+        super("buyc", description, "/buyc <command>");
         this.plugin = plugin;
-        this.wshopConfig = new Config(new File(plugin.getDataFolder(), "wshop.yml"), Config.YAML);
+        this.buycConfig = new Config(new File(plugin.getDataFolder(), "buyc.yml"), Config.YAML);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class WbuyCommand extends BaseCommand {
 
     @Override
     protected boolean validateArgs(String[] args, Player player) {
-        if (args.length < 2 || !"command".equalsIgnoreCase(args[0])) {
+        if (args.length < 1) {
             player.sendMessage(this.getUsage());
             return false;
         }
@@ -40,20 +40,20 @@ public class WbuyCommand extends BaseCommand {
 
     @Override
     protected boolean handleCommand(Player player, String[] args) {
-        String identifier = args[1];
-        String path = "wshop.command." + identifier;
+        String identifier = args[0];
+        String path = "commands." + identifier;
 
-        if (!wshopConfig.exists(path)) {
-            player.sendMessage("§cThe specified command identifier does not exist in wshop.yml.");
+        if (!buycConfig.exists(path)) {
+            player.sendMessage("§cThe specified command identifier does not exist in buyc.yml.");
             return false;
         }
 
-        Map<String, Object> commandData = wshopConfig.getSection(path).getAll();
+        Map<String, Object> commandData = buycConfig.getSection(path).getAll();
         String commandToExecute = (String) commandData.get("execute");
         int price = (int) commandData.get("price");
 
         if (commandToExecute == null || price <= 0) {
-            player.sendMessage("§cInvalid command configuration in wshop.yml.");
+            player.sendMessage("§cInvalid command configuration in buyc.yml.");
             return false;
         }
 
@@ -64,10 +64,15 @@ public class WbuyCommand extends BaseCommand {
         }
 
         EconomyAPI.getInstance().reduceMoney(player, price);
-        String finalCommand = commandToExecute.replace("%p", player.getName());
-        this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), finalCommand);
+        String finalCommand = commandToExecute.replace("%p%", player.getName());
+        boolean commandSuccess = this.plugin.getServer().dispatchCommand(this.plugin.getServer().getConsoleSender(), finalCommand);
 
-        player.sendMessage("§aYou have successfully purchased and executed the command for " + price + " money.");
-        return true;
+        if (commandSuccess) {
+            player.sendMessage("§aYou have successfully purchased and executed the command for " + price + " money.");
+        } else {
+            player.sendMessage("§cThe command execution failed. Your money has been refunded.");
+            EconomyAPI.getInstance().addMoney(player, price);
+        }
+        return commandSuccess;
     }
 }

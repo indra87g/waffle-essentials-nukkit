@@ -23,19 +23,19 @@ public abstract class BaseCommand extends Command {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (this.getPermission() != null && !this.testPermission(sender)) {
             sender.sendMessage("You do not have permission to use this command.");
-            return false;
+            return true; // Return true to prevent usage message
         }
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("This command can only be used by a player.");
-            return false;
+            return true; // Return true to prevent usage message
         }
 
         Player player = (Player) sender;
 
         if (!validateArgs(args, player)) {
             // The validateArgs method is responsible for sending the usage message.
-            return false;
+            return true; // Return true to prevent another usage message
         }
 
         try {

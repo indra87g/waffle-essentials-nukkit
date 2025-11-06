@@ -46,8 +46,8 @@ public class BankCommand extends BaseCommand {
 
     private void sendUsage(Player player) {
         player.sendMessage(TextFormat.AQUA + "Waffle Bank Command Usage:");
-        player.sendMessage(TextFormat.YELLOW + "/bank deposit <money|exp> <amount>");
-        player.sendMessage(TextFormat.YELLOW + "/bank withdraw <money|exp> <amount>");
+        player.sendMessage(TextFormat.YELLOW + "/bank deposit <amount>");
+        player.sendMessage(TextFormat.YELLOW + "/bank withdraw <amount>");
         player.sendMessage(TextFormat.YELLOW + "/bank account view");
         player.sendMessage(TextFormat.YELLOW + "/bank account register");
         player.sendMessage(TextFormat.YELLOW + "/bank account purge");
@@ -93,9 +93,7 @@ public class BankCommand extends BaseCommand {
 
         player.addExperience(-500);
         bankData.set(playerName + ".money", 0);
-        bankData.set(playerName + ".exp", 0);
         bankData.set(playerName + ".max_money", 1000000);
-        bankData.set(playerName + ".max_exp", 100000);
         bankData.save();
 
         player.sendMessage(TextFormat.GREEN + "Bank account registered successfully for 500 EXP!");
@@ -121,16 +119,13 @@ public class BankCommand extends BaseCommand {
         }
 
         double money = bankData.getDouble(playerName + ".money", 0);
-        int exp = bankData.getInt(playerName + ".exp", 0);
         double maxMoney = bankData.getDouble(playerName + ".max_money", 1000000);
-        int maxExp = bankData.getInt(playerName + ".max_exp", 100000);
         String bankName = plugin.getConfig().getString("bank.bank_name", "Waffle Bank");
 
         player.sendMessage(TextFormat.GOLD + "=============");
         player.sendMessage(TextFormat.AQUA + bankName);
         player.sendMessage(TextFormat.WHITE + "Name: " + playerName);
         player.sendMessage(TextFormat.YELLOW + "Money: " + TextFormat.WHITE + (int)money + " / " + (int)maxMoney);
-        player.sendMessage(TextFormat.YELLOW + "EXP: " + TextFormat.WHITE + exp + " / " + maxExp);
         player.sendMessage(TextFormat.GOLD + "=============");
     }
 
@@ -141,15 +136,14 @@ public class BankCommand extends BaseCommand {
             return;
         }
 
-        if (args.length < 3) {
-            player.sendMessage(TextFormat.RED + "Usage: /bank deposit <money|exp> <amount>");
+        if (args.length < 2) {
+            player.sendMessage(TextFormat.RED + "Usage: /bank deposit <amount>");
             return;
         }
 
-        String type = args[1].toLowerCase();
         int amount;
         try {
-            amount = Integer.parseInt(args[2]);
+            amount = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             player.sendMessage(TextFormat.RED + "Invalid amount.");
             return;
@@ -160,56 +154,29 @@ public class BankCommand extends BaseCommand {
             return;
         }
 
-        if ("money".equals(type)) {
-            int minDeposit = plugin.getConfig().getInt("bank.min_deposit_money", 1000);
-            if (amount < minDeposit) {
-                player.sendMessage(TextFormat.RED + "Minimum money deposit is " + minDeposit);
-                return;
-            }
-
-            double currentBalance = EconomyAPI.getInstance().myMoney(player);
-            if (currentBalance < amount) {
-                player.sendMessage(TextFormat.RED + "You don't have enough money.");
-                return;
-            }
-
-            double currentBankMoney = bankData.getDouble(playerName + ".money", 0);
-            double maxMoney = bankData.getDouble(playerName + ".max_money", 1000000);
-            if (currentBankMoney + amount > maxMoney) {
-                player.sendMessage(TextFormat.RED + "You have reached your maximum money limit in the bank.");
-                return;
-            }
-
-            EconomyAPI.getInstance().reduceMoney(player, amount);
-            bankData.set(playerName + ".money", currentBankMoney + amount);
-            bankData.save();
-            player.sendMessage(TextFormat.GREEN + "Successfully deposited " + amount + " money.");
-        } else if ("exp".equals(type)) {
-            int minDeposit = plugin.getConfig().getInt("bank.min_deposit_exp", 500);
-            if (amount < minDeposit) {
-                player.sendMessage(TextFormat.RED + "Minimum EXP deposit is " + minDeposit);
-                return;
-            }
-
-            if (player.getExperience() < amount) {
-                player.sendMessage(TextFormat.RED + "You don't have enough EXP.");
-                return;
-            }
-
-            int currentBankExp = bankData.getInt(playerName + ".exp", 0);
-            int maxExp = bankData.getInt(playerName + ".max_exp", 100000);
-            if (currentBankExp + amount > maxExp) {
-                player.sendMessage(TextFormat.RED + "You have reached your maximum EXP limit in the bank.");
-                return;
-            }
-
-            player.addExperience(-amount);
-            bankData.set(playerName + ".exp", currentBankExp + amount);
-            bankData.save();
-            player.sendMessage(TextFormat.GREEN + "Successfully deposited " + amount + " EXP.");
-        } else {
-            player.sendMessage(TextFormat.RED + "Usage: /bank deposit <money|exp> <amount>");
+        int minDeposit = plugin.getConfig().getInt("bank.min_deposit_money", 1000);
+        if (amount < minDeposit) {
+            player.sendMessage(TextFormat.RED + "Minimum money deposit is " + minDeposit);
+            return;
         }
+
+        double currentBalance = EconomyAPI.getInstance().myMoney(player);
+        if (currentBalance < amount) {
+            player.sendMessage(TextFormat.RED + "You don't have enough money.");
+            return;
+        }
+
+        double currentBankMoney = bankData.getDouble(playerName + ".money", 0);
+        double maxMoney = bankData.getDouble(playerName + ".max_money", 1000000);
+        if (currentBankMoney + amount > maxMoney) {
+            player.sendMessage(TextFormat.RED + "You have reached your maximum money limit in the bank.");
+            return;
+        }
+
+        EconomyAPI.getInstance().reduceMoney(player, amount);
+        bankData.set(playerName + ".money", currentBankMoney + amount);
+        bankData.save();
+        player.sendMessage(TextFormat.GREEN + "Successfully deposited " + amount + " money.");
     }
 
     private void handleWithdraw(Player player, String[] args) {
@@ -219,15 +186,14 @@ public class BankCommand extends BaseCommand {
             return;
         }
 
-        if (args.length < 3) {
-            player.sendMessage(TextFormat.RED + "Usage: /bank withdraw <money|exp> <amount>");
+        if (args.length < 2) {
+            player.sendMessage(TextFormat.RED + "Usage: /bank withdraw <amount>");
             return;
         }
 
-        String type = args[1].toLowerCase();
         int amount;
         try {
-            amount = Integer.parseInt(args[2]);
+            amount = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             player.sendMessage(TextFormat.RED + "Invalid amount.");
             return;
@@ -238,43 +204,22 @@ public class BankCommand extends BaseCommand {
             return;
         }
 
-        if ("money".equals(type)) {
-            int minWithdraw = plugin.getConfig().getInt("bank.min_withdraw_money", 1000);
-            if (amount < minWithdraw) {
-                player.sendMessage(TextFormat.RED + "Minimum money withdraw is " + minWithdraw);
-                return;
-            }
-
-            double currentBankMoney = bankData.getDouble(playerName + ".money", 0);
-            if (currentBankMoney < amount) {
-                player.sendMessage(TextFormat.RED + "You don't have enough money in the bank.");
-                return;
-            }
-
-            EconomyAPI.getInstance().addMoney(player, amount);
-            bankData.set(playerName + ".money", currentBankMoney - amount);
-            bankData.save();
-            player.sendMessage(TextFormat.GREEN + "Successfully withdrew " + amount + " money.");
-        } else if ("exp".equals(type)) {
-            int minWithdraw = plugin.getConfig().getInt("bank.min_withdraw_exp", 500);
-            if (amount < minWithdraw) {
-                player.sendMessage(TextFormat.RED + "Minimum EXP withdraw is " + minWithdraw);
-                return;
-            }
-
-            int currentBankExp = bankData.getInt(playerName + ".exp", 0);
-            if (currentBankExp < amount) {
-                player.sendMessage(TextFormat.RED + "You don't have enough EXP in the bank.");
-                return;
-            }
-
-            player.addExperience(amount);
-            bankData.set(playerName + ".exp", currentBankExp - amount);
-            bankData.save();
-            player.sendMessage(TextFormat.GREEN + "Successfully withdrew " + amount + " EXP.");
-        } else {
-            player.sendMessage(TextFormat.RED + "Usage: /bank withdraw <money|exp> <amount>");
+        int minWithdraw = plugin.getConfig().getInt("bank.min_withdraw_money", 1000);
+        if (amount < minWithdraw) {
+            player.sendMessage(TextFormat.RED + "Minimum money withdraw is " + minWithdraw);
+            return;
         }
+
+        double currentBankMoney = bankData.getDouble(playerName + ".money", 0);
+        if (currentBankMoney < amount) {
+            player.sendMessage(TextFormat.RED + "You don't have enough money in the bank.");
+            return;
+        }
+
+        EconomyAPI.getInstance().addMoney(player, amount);
+        bankData.set(playerName + ".money", currentBankMoney - amount);
+        bankData.save();
+        player.sendMessage(TextFormat.GREEN + "Successfully withdrew " + amount + " money.");
     }
 
     private void handleLimitUpgrade(Player player, String[] args) {
@@ -317,13 +262,8 @@ public class BankCommand extends BaseCommand {
         player.getInventory().removeItem(Item.get(Item.NETHER_STAR, 0, amount));
 
         double maxMoney = bankData.getDouble(playerName + ".max_money", 1000000);
-        int maxExp = bankData.getInt(playerName + ".max_exp", 100000);
-
         double newMaxMoney = maxMoney * (1 + (0.25 * amount));
-        int newMaxExp = (int) (maxExp * (1 + (0.25 * amount)));
-
         bankData.set(playerName + ".max_money", newMaxMoney);
-        bankData.set(playerName + ".max_exp", newMaxExp);
         bankData.save();
 
         player.sendMessage(TextFormat.GREEN + "Successfully upgraded your bank limit by " + (25 * amount) + "%");

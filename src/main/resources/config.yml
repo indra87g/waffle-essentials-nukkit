@@ -27,8 +27,6 @@ commands:
     bank_name: "Waffle Bank"
     min_deposit_money: 1000
     min_withdraw_money: 1000
-    min_deposit_exp: 500
-    min_withdraw_exp: 500
 
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"

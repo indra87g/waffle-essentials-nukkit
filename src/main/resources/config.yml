@@ -17,13 +17,18 @@ commands:
   redeem:
     description: "Redeem a code for a reward"
     enabled: true
-  wbuy:
-    description: "Buy a command from the shop"
-    enabled: true
   near:
     description: "Shows nearby players"
     enabled: true
     nearDetectionRadius: 100
+  bank:
+    description: "Manage your bank account"
+    enabled: true
+    bank_name: "Waffle Bank"
+    min_deposit_money: 1000
+    min_withdraw_money: 1000
+    min_deposit_exp: 500
+    min_withdraw_exp: 500
 
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"

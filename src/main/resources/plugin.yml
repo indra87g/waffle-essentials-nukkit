@@ -9,10 +9,17 @@ commands:
     description: "Shows nearby players"
     usage: "/near"
     permission: waffle.near
+  bank:
+    description: "Manage your bank account"
+    usage: "/bank"
+    permission: waffle.bank
 permissions:
   waffle.near:
     description: "Allows the user to use the /near command"
     default: op
+  waffle.bank:
+    description: "Allows the user to use the /bank command"
+    default: true
   waffle.near.ignore:
     description: "Makes the player invisible to the /near command"
     default: op

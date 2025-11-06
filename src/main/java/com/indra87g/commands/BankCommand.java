@@ -8,8 +8,6 @@ import com.indra87g.Main;
 import me.onebone.economyapi.EconomyAPI;
 
 import java.io.File;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 public class BankCommand extends BaseCommand {
 
@@ -17,7 +15,7 @@ public class BankCommand extends BaseCommand {
     private final Config bankData;
 
     public BankCommand(String description, Main plugin) {
-        super("bank", description, "/bank help");
+        super("bank", description, "/bank <deposit|withdraw|account>");
         this.plugin = plugin;
         this.bankData = new Config(new File(plugin.getDataFolder(), "bank.yml"), Config.YAML);
     }
@@ -25,14 +23,8 @@ public class BankCommand extends BaseCommand {
     @Override
     protected boolean handleCommand(Player player, String[] args) {
         if (args.length == 0) {
-            player.sendMessage(TextFormat.AQUA + "Waffle Bank Command Usage:");
-            player.sendMessage(TextFormat.YELLOW + "/bank deposit <money|exp> <amount>");
-            player.sendMessage(TextFormat.YELLOW + "/bank withdraw <money|exp> <amount>");
-            player.sendMessage(TextFormat.YELLOW + "/bank account view");
-            player.sendMessage(TextFormat.YELLOW + "/bank account register");
-            player.sendMessage(TextFormat.YELLOW + "/bank account purge");
-            player.sendMessage(TextFormat.YELLOW + "/bank account upgradelimit <nether_stars>");
-            return true;
+            sendUsage(player);
+            return false;
         }
 
         switch (args[0].toLowerCase()) {
@@ -46,10 +38,20 @@ public class BankCommand extends BaseCommand {
                 handleAccount(player, args);
                 break;
             default:
-                player.sendMessage(TextFormat.RED + "Unknown subcommand. Use /bank for help.");
-                break;
+                sendUsage(player);
+                return false;
         }
         return true;
+    }
+
+    private void sendUsage(Player player) {
+        player.sendMessage(TextFormat.AQUA + "Waffle Bank Command Usage:");
+        player.sendMessage(TextFormat.YELLOW + "/bank deposit <money|exp> <amount>");
+        player.sendMessage(TextFormat.YELLOW + "/bank withdraw <money|exp> <amount>");
+        player.sendMessage(TextFormat.YELLOW + "/bank account view");
+        player.sendMessage(TextFormat.YELLOW + "/bank account register");
+        player.sendMessage(TextFormat.YELLOW + "/bank account purge");
+        player.sendMessage(TextFormat.YELLOW + "/bank account upgradelimit <nether_stars>");
     }
 
     private void handleAccount(Player player, String[] args) {

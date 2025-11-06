@@ -124,13 +124,11 @@ public class BankCommand extends BaseCommand {
         int maxExp = bankData.getInt(playerName + ".max_exp", 100000);
         String bankName = plugin.getConfig().getString("bank.bank_name", "Waffle Bank");
 
-        NumberFormat nf = NumberFormat.getInstance(new Locale("id", "ID"));
-
         player.sendMessage(TextFormat.GOLD + "=============");
         player.sendMessage(TextFormat.AQUA + bankName);
         player.sendMessage(TextFormat.WHITE + "Name: " + playerName);
-        player.sendMessage(TextFormat.YELLOW + "Money: " + TextFormat.WHITE + "Rp" + nf.format(money) + " / Rp" + nf.format(maxMoney));
-        player.sendMessage(TextFormat.YELLOW + "EXP: " + TextFormat.WHITE + nf.format(exp) + " / " + nf.format(maxExp));
+        player.sendMessage(TextFormat.YELLOW + "Money: " + TextFormat.WHITE + (int)money + " / " + (int)maxMoney);
+        player.sendMessage(TextFormat.YELLOW + "EXP: " + TextFormat.WHITE + exp + " / " + maxExp);
         player.sendMessage(TextFormat.GOLD + "=============");
     }
 

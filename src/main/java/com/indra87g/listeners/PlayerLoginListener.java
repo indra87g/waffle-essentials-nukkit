@@ -42,8 +42,7 @@ public class PlayerLoginListener implements Listener {
             bankData.set(playerName + ".money", newMoney);
             bankData.save();
 
-            NumberFormat nf = NumberFormat.getInstance(new Locale("id", "ID"));
-            player.sendMessage(TextFormat.GREEN + "You received Rp" + nf.format(interest) + " interest for logging in!");
+            player.sendMessage(TextFormat.GREEN + "You received " + interest + " interest for logging in!");
         }
     }
 }

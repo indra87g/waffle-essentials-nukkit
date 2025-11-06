@@ -1,7 +1,6 @@
 package com.indra87g.commands;
 
 import cn.nukkit.Player;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
@@ -18,20 +17,13 @@ public class BankCommand extends BaseCommand {
     private final Config bankData;
 
     public BankCommand(String description, Main plugin) {
-        super("bank", description);
+        super("bank", description, "/bank help");
         this.plugin = plugin;
         this.bankData = new Config(new File(plugin.getDataFolder(), "bank.yml"), Config.YAML);
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be used in-game.");
-            return true;
-        }
-
-        Player player = (Player) sender;
-
+    protected boolean handleCommand(Player player, String[] args) {
         if (args.length == 0) {
             player.sendMessage(TextFormat.AQUA + "Waffle Bank Command Usage:");
             player.sendMessage(TextFormat.YELLOW + "/bank deposit <money|exp> <amount>");
@@ -54,7 +46,7 @@ public class BankCommand extends BaseCommand {
                 handleAccount(player, args);
                 break;
             default:
-                 player.sendMessage(TextFormat.RED + "Unknown subcommand. Use /bank for help.");
+                player.sendMessage(TextFormat.RED + "Unknown subcommand. Use /bank for help.");
                 break;
         }
         return true;
@@ -221,7 +213,7 @@ public class BankCommand extends BaseCommand {
     }
 
     private void handleWithdraw(Player player, String[] args) {
-         String playerName = player.getName();
+        String playerName = player.getName();
         if (!bankData.exists(playerName)) {
             player.sendMessage(TextFormat.RED + "You don't have a bank account. Use '/bank account register' to create one.");
             return;
@@ -286,7 +278,7 @@ public class BankCommand extends BaseCommand {
     }
 
     private void handleLimitUpgrade(Player player, String[] args) {
-         String playerName = player.getName();
+        String playerName = player.getName();
         if (!bankData.exists(playerName)) {
             player.sendMessage(TextFormat.RED + "You don't have a bank account. Use '/bank account register' to create one.");
             return;
@@ -310,13 +302,19 @@ public class BankCommand extends BaseCommand {
             return;
         }
 
-        Item netherStar = Item.get(Item.NETHER_STAR, 0, amount);
-        if (!player.getInventory().contains(netherStar)) {
+        int totalNetherStars = 0;
+        for (Item item : player.getInventory().getContents().values()) {
+            if (item.getId() == Item.NETHER_STAR) {
+                totalNetherStars += item.getCount();
+            }
+        }
+
+        if (totalNetherStars < amount) {
             player.sendMessage(TextFormat.RED + "You don't have enough Nether Stars.");
             return;
         }
 
-        player.getInventory().removeItem(netherStar);
+        player.getInventory().removeItem(Item.get(Item.NETHER_STAR, 0, amount));
 
         double maxMoney = bankData.getDouble(playerName + ".max_money", 1000000);
         int maxExp = bankData.getInt(playerName + ".max_exp", 100000);

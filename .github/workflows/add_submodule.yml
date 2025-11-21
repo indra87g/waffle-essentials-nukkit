@@ -1,0 +1,45 @@
+name: Add Submodule
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: "URL GitHub Repo yang akan dijadikan submodule"
+        required: true
+        type: string
+      submodule_path:
+        description: "Path folder tempat submodule disimpan (contoh: modules/MyPlugin)"
+        required: true
+        type: string
+
+jobs:
+  add-submodule:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write 
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Konfigurasi git user
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Tambahkan submodule
+      run: |
+        git submodule add ${{ inputs.repo_url }} ${{ inputs.submodule_path }}
+
+    - name: Commit perubahan
+      run: |
+        git add .
+        git commit -m "Add submodule: ${{ inputs.repo_url }} -> ${{ inputs.submodule_path }}" || echo "No changes to commit"
+
+    - name: Push perubahan
+      run: |
+        git push origin HEAD:${{ github.ref_name }}
+        

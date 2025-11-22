@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout dengan submodules
+    - name: Checkout submodules
       uses: actions/checkout@v4
       with:
         submodules: recursive
@@ -27,7 +27,7 @@ jobs:
         restore-keys: |
           maven-${{ runner.os }}
 
-    - name: Build plugin submodule dengan Maven
+    - name: Build plugin with Maven
       run: |
         cd modules/WaffleCoreNK
         mvn clean package

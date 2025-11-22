@@ -1,0 +1,3 @@
+[submodule "modules/WaffleCoreNK"]
+	path = modules/WaffleCoreNK
+	url = https://github.com/indra87g/waffle-core-nukkit

@@ -3,21 +3,18 @@ package com.indra87g.util;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.Config;
 import java.io.File;
-import java.util.Map;
+import lombok.Getter;
 
+@Getter
 public class ConfigManager {
 
     private final Plugin plugin;
-    private Config config;
+    private final Config config;
 
     public ConfigManager(Plugin plugin) {
         this.plugin = plugin;
-        this.loadConfig();
-    }
-
-    private void loadConfig() {
-        plugin.saveDefaultConfig();
-        config = new Config(new File(plugin.getDataFolder(), "config.yml"), Config.YAML);
+        this.plugin.saveDefaultConfig();
+        this.config = new Config(new File(plugin.getDataFolder(), "config.yml"), Config.YAML);
     }
 
     public boolean isCommandEnabled(String commandName) {
@@ -30,9 +27,5 @@ public class ConfigManager {
 
     public String getFastMessage(String messageKey) {
         return config.getString("fast_messages." + messageKey, null);
-    }
-
-    public int getNearDetectionRadius() {
-        return config.getInt("commands.near.nearDetectionRadius", 100);
     }
 }

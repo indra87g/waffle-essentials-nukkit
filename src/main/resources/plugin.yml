@@ -5,17 +5,7 @@ api: 1.0.0
 author: indra87g
 description: Core plugin for the WaffleNK ecosystem.
 commands:
-  near:
-    description: "Shows nearby players"
-    usage: "/near"
-    permission: waffle.near
 permissions:
-  waffle.near:
-    description: "Allows the user to use the /near command"
-    default: op
-  waffle.near.ignore:
-    description: "Makes the player invisible to the /near command"
-    default: op
   waffle.setblock:
     description: "Allows the user to use the /setblock command"
     default: op

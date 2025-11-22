@@ -7,16 +7,14 @@ import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.scheduler.PluginTask;
 import com.indra87g.Main;
+import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class PlayerMoveListener implements Listener {
 
     private final Main plugin;
-
-    public PlayerMoveListener(Main plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {

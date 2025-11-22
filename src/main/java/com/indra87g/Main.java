@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import lombok.Getter;
 
+@Getter
 public class Main extends PluginBase {
 
     private ConfigManager configManager;
@@ -73,8 +75,6 @@ public class Main extends PluginBase {
         registerSimpleCommand("clearchat", "Clear your chat", (desc, main) -> new ClearChatCommand(desc));
         registerSimpleCommand("info", "Shows your player information", InfoCommand::new);
         registerSimpleCommand("redeem", "Redeem a code for a reward", RedeemCommand::new);
-        registerSimpleCommand("wbuy", "Buy a command from the shop", WbuyCommand::new);
-        registerSimpleCommand("near", "Shows nearby players", NearCommand::new);
     }
 
     private void registerSimpleCommand(String name, String defaultDescription, BiFunction<String, Main, Command> constructor) {
@@ -82,25 +82,5 @@ public class Main extends PluginBase {
             String description = configManager.getCommandDescription(name, defaultDescription);
             this.getServer().getCommandMap().register(name, constructor.apply(description, this));
         }
-    }
-
-    public List<Map> getServers() {
-        return servers;
-    }
-
-    public Map<UUID, PluginTask<?>> getCountdowns() {
-        return countdowns;
-    }
-
-    public Map<UUID, Player> getTeleportingPlayers() {
-        return teleportingPlayers;
-    }
-
-    public Map<UUID, cn.nukkit.level.Location> getPlayerLocations() {
-        return playerLocations;
-    }
-
-    public boolean isEconomyAPIAvailable() {
-        return economyAPIAvailable;
     }
 }

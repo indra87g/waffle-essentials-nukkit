@@ -17,17 +17,5 @@ commands:
   redeem:
     description: "Redeem a code for a reward"
     enabled: true
-  wbuy:
-    description: "Buy a command from the shop"
-    enabled: true
-  near:
-    description: "Shows nearby players"
-    enabled: true
-    nearDetectionRadius: 100
-
 fast_messages:
   contoh: "Lorem ipsum dolor sit amet"
-
-near-no: "§cNo players found within %d blocks."
-near-found: "§aPlayers within %d blocks:"
-near-player: "§f%s (%d blocks)"

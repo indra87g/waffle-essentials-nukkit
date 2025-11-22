@@ -1,0 +1,40 @@
+name: Build Nukkit Plugin (WaffleCoreNK)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout dengan submodules
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '8'
+
+    - name: Cache Maven
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: maven-${{ runner.os }}-${{ hashFiles('modules/WaffleCoreNK/**/pom.xml') }}
+        restore-keys: |
+          maven-${{ runner.os }}
+
+    - name: Build plugin submodule dengan Maven
+      run: |
+        cd modules/WaffleCoreNK
+        mvn clean package
+
+    - name: Upload Plugin JAR
+      uses: actions/upload-artifact@v4
+      with:
+        name: Plugin-Submodule
+        path: modules/WaffleCoreNK/target/*.jar
+        

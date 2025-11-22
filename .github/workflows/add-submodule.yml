@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       repo_url:
-        description: "URL GitHub Repo yang akan dijadikan submodule"
+        description: "Github Repo URL"
         required: true
         type: string
       submodule_path:
-        description: "Path folder tempat submodule disimpan (contoh: modules/MyPlugin)"
+        description: "Submodule target path (e.g: modules/MyPlugin)"
         required: true
         type: string
 
@@ -25,21 +25,21 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Konfigurasi git user
+    - name: Configure git user
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Tambahkan submodule
+    - name: Add submodule
       run: |
         git submodule add ${{ inputs.repo_url }} ${{ inputs.submodule_path }}
 
-    - name: Commit perubahan
+    - name: Commit changes
       run: |
         git add .
         git commit -m "Add submodule: ${{ inputs.repo_url }} -> ${{ inputs.submodule_path }}" || echo "No changes to commit"
 
-    - name: Push perubahan
+    - name: Push changes
       run: |
         git push origin HEAD:${{ github.ref_name }}
         

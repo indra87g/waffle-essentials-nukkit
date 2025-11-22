@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout kode
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Setup JDK
@@ -25,11 +25,11 @@ jobs:
         restore-keys: |
           maven-${{ runner.os}}
 
-    - name: Build plugin dengan Maven
+    - name: Build plugin with Maven
       run: mvn clean package
 
     - name: Upload Plugin JAR
       uses: actions/upload-artifact@v4
       with:
-        name: WaffleCoreNK
+        name: WaffleEssentialsNK
         path: target/*.jar

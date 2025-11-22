@@ -1,4 +1,4 @@
-name: Build Nukkit Plugin
+name: Build Nukkit Plugin (WaffleEssentialsNK)
 
 on:
   workflow_dispatch:

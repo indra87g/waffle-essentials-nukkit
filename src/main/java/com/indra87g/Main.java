@@ -38,7 +38,6 @@ public class Main extends PluginBase implements Listener {
         this.saveDefaultConfig();
         this.saveResource("servers.yml");
         this.saveResource("redeem_codes.yml");
-        this.saveResource("wshop.yml");
 
         configManager = new ConfigManager(this);
         infoForm = new InfoForm(this);
@@ -46,7 +45,7 @@ public class Main extends PluginBase implements Listener {
         Config serversConfig = new Config(new File(this.getDataFolder(), "servers.yml"), Config.YAML);
         this.servers = serversConfig.getMapList("servers");
 
-        getLogger().info("WaffleCoreNK has been enabled.");
+        getLogger().info("WaffleEssentialsNK has been enabled.");
 
         checkEconomyAPI();
         registerCommands();
@@ -65,7 +64,6 @@ public class Main extends PluginBase implements Listener {
     }
 
     private void registerCommands() {
-        // Commands with special registration logic
         if (configManager.isCommandEnabled("servers")) {
             String description = configManager.getCommandDescription("servers", "Shows a list of available servers.");
             ServersCommand serversCommand = new ServersCommand(this, description);

@@ -21,12 +21,16 @@ public class InfoForm {
     public void sendMainForm(Player player) {
         FormWindowSimple form = new FormWindowSimple("§b✧ Info Menu ✧", "Select an option below:");
 
-        form.addButton(new ElementButton("Player Info",
-                new ElementButtonImageData("path", "textures/items/name_tag")));
-        form.addButton(new ElementButton("Item Info",
-                new ElementButtonImageData("path", "textures/items/diamond_sword")));
-        form.addButton(new ElementButton("Server Info",
-                new ElementButtonImageData("path", "textures/items/compass")));
+        if (player.hasPermission("waffle.info.player") || player.hasPermission("waffle.info.all")) {
+            form.addButton(new ElementButton("Player Info",
+                    new ElementButtonImageData("path", "textures/items/name_tag")));
+        }
+        if (player.hasPermission("waffle.info.all")) {
+            form.addButton(new ElementButton("Item Info",
+                    new ElementButtonImageData("path", "textures/items/diamond_sword")));
+            form.addButton(new ElementButton("Server Info",
+                    new ElementButtonImageData("path", "textures/items/compass")));
+        }
 
         player.showFormWindow(form, MAIN_FORM_ID);
     }

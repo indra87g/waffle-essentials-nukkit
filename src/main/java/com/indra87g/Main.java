@@ -46,6 +46,8 @@ public class Main extends PluginBase implements Listener {
         this.saveResource("servers.yml");
         this.saveResource("redeem_codes.yml");
 
+        primeRedeemCodeTimestamps();
+
         configManager = new ConfigManager(this);
         infoForm = new InfoForm(this);
 
@@ -67,6 +69,26 @@ public class Main extends PluginBase implements Listener {
             getLogger().info("EconomyAPI integration enabled!");
         } else {
             getLogger().info("EconomyAPI integration disabled!");
+        }
+    }
+
+    private void primeRedeemCodeTimestamps() {
+        Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+        boolean changed = false;
+        for (String code : redeemCodesConfig.getKeys(false)) {
+            Map<String, Object> codeData = redeemCodesConfig.getSection(code).getAll();
+            if (codeData.containsKey("expired") && !codeData.containsKey("creation_timestamp")) {
+                long expiredHours = ((Number) codeData.get("expired")).longValue();
+                if (expiredHours != -1) {
+                    codeData.put("creation_timestamp", Instant.now().getEpochSecond());
+                    redeemCodesConfig.set(code, codeData);
+                    changed = true;
+                }
+            }
+        }
+        if (changed) {
+            redeemCodesConfig.save();
+            getLogger().info("Primed timestamps for new redeem codes.");
         }
     }
 

@@ -1,9 +1,9 @@
-name: WaffleCoreNK
+name: WaffleEssentialsNK
 main: com.indra87g.Main
 version: "${pom.version}"
 api: 1.0.0
 author: indra87g
-description: Core plugin for the WaffleNK ecosystem.
+description: Lorem ipsum dolor sit amet.
 commands:
 permissions:
   waffle.setblock:

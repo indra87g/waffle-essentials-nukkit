@@ -2,10 +2,16 @@ package com.indra87g;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
+import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerFormRespondedEvent;
+import cn.nukkit.form.response.FormResponseSimple;
+import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 import com.indra87g.commands.*;
+import com.indra87g.forms.InfoForm;
 import com.indra87g.util.ConfigManager;
 
 import java.io.File;
@@ -14,14 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import lombok.Getter;
 
 @Getter
-public class Main extends PluginBase {
+public class Main extends PluginBase implements Listener {
 
     private ConfigManager configManager;
     private List<Map> servers;
+    private InfoForm infoForm;
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
     private final Map<UUID, cn.nukkit.level.Location> playerLocations = new HashMap<>();
@@ -35,6 +41,7 @@ public class Main extends PluginBase {
         this.saveResource("wshop.yml");
 
         configManager = new ConfigManager(this);
+        infoForm = new InfoForm(this);
 
         Config serversConfig = new Config(new File(this.getDataFolder(), "servers.yml"), Config.YAML);
         this.servers = serversConfig.getMapList("servers");
@@ -45,6 +52,7 @@ public class Main extends PluginBase {
         registerCommands();
 
         this.getServer().getPluginManager().registerEvents(new com.indra87g.listeners.PlayerMoveListener(this), this);
+        this.getServer().getPluginManager().registerEvents(this, this);
     }
 
     private void checkEconomyAPI() {
@@ -81,6 +89,30 @@ public class Main extends PluginBase {
         if (configManager.isCommandEnabled(name)) {
             String description = configManager.getCommandDescription(name, defaultDescription);
             this.getServer().getCommandMap().register(name, constructor.apply(description, this));
+        }
+    }
+
+    @EventHandler
+    public void onFormResponse(PlayerFormRespondedEvent event) {
+        Player player = event.getPlayer();
+        if (event.getFormID() == InfoForm.MAIN_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                int clickedButtonId = response.getClickedButtonId();
+
+                switch (clickedButtonId) {
+                    case 0: // Player Info
+                        infoForm.sendPlayerInfoForm(player);
+                        break;
+                    case 1: // Item Info
+                        infoForm.sendItemInfoForm(player);
+                        break;
+                    case 2: // Server Info
+                        infoForm.sendServerInfoForm(player);
+                        break;
+                }
+            }
         }
     }
 }

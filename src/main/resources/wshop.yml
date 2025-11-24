@@ -1,5 +1,0 @@
-wshop:
-    command:
-        mycommand:
-            execute: "enchant %p silk_touch"
-            price: 1500

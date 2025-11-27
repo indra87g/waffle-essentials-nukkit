@@ -16,12 +16,9 @@ permissions:
     description: "Allows the user to use the /info command"
     default: true
     children:
-      waffle.info.me:
-        description: "Allows the user to use the /info me command"
-        default: true
-      waffle.info.server:
-        description: "Allows the user to use the /info server command"
-        default: true
-      waffle.info.item:
-        description: "Allows the user to use the /info item command"
-        default: true
+      waffle.info.player:
+        description: "Allows the user to see and access the player info menu"
+        default: op
+      waffle.info.all:
+        description: "Allows the user to see and access all menus in the info form"
+        default: op

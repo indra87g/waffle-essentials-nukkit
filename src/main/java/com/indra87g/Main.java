@@ -16,12 +16,13 @@ import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 import com.indra87g.commands.*;
 import com.indra87g.forms.InfoForm;
+import com.indra87g.forms.RedeemAdminForm;
 import com.indra87g.forms.RedeemForm;
 import com.indra87g.util.ConfigManager;
 import me.onebone.economyapi.EconomyAPI;
 
 import java.io.File;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,12 @@ public class Main extends PluginBase implements Listener {
     private ConfigManager configManager;
     private List<Map> servers;
     private InfoForm infoForm;
+    private RedeemAdminForm redeemAdminForm;
     private final Map<UUID, PluginTask<?>> countdowns = new HashMap<>();
     private final Map<UUID, Player> teleportingPlayers = new HashMap<>();
     private final Map<UUID, cn.nukkit.level.Location> playerLocations = new HashMap<>();
+    private final Map<UUID, String> codeBeingUpdated = new HashMap<>();
+    private final Map<UUID, String> codeBeingDeleted = new HashMap<>();
     private boolean economyAPIAvailable = false;
 
     @Override
@@ -46,10 +50,9 @@ public class Main extends PluginBase implements Listener {
         this.saveResource("servers.yml");
         this.saveResource("redeem_codes.yml");
 
-        primeRedeemCodeTimestamps();
-
         configManager = new ConfigManager(this);
         infoForm = new InfoForm(this);
+        redeemAdminForm = new RedeemAdminForm();
 
         Config serversConfig = new Config(new File(this.getDataFolder(), "servers.yml"), Config.YAML);
         this.servers = serversConfig.getMapList("servers");
@@ -69,26 +72,6 @@ public class Main extends PluginBase implements Listener {
             getLogger().info("EconomyAPI integration enabled!");
         } else {
             getLogger().info("EconomyAPI integration disabled!");
-        }
-    }
-
-    private void primeRedeemCodeTimestamps() {
-        Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
-        boolean changed = false;
-        for (String code : redeemCodesConfig.getKeys(false)) {
-            Map<String, Object> codeData = redeemCodesConfig.getSection(code).getAll();
-            if (codeData.containsKey("expired") && !codeData.containsKey("creation_timestamp")) {
-                long expiredHours = ((Number) codeData.get("expired")).longValue();
-                if (expiredHours != -1) {
-                    codeData.put("creation_timestamp", Instant.now().getEpochSecond());
-                    redeemCodesConfig.set(code, codeData);
-                    changed = true;
-                }
-            }
-        }
-        if (changed) {
-            redeemCodesConfig.save();
-            getLogger().info("Primed timestamps for new redeem codes.");
         }
     }
 
@@ -140,6 +123,141 @@ public class Main extends PluginBase implements Listener {
                         break;
                 }
             }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                int clickedButtonId = response.getClickedButtonId();
+
+                switch (clickedButtonId) {
+                    case 0: // Create
+                        redeemAdminForm.sendCreateForm(player);
+                        break;
+                    case 1: // Read
+                        Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                        redeemAdminForm.sendCodeList(player, redeemCodesConfig, RedeemAdminForm.REDEEM_ADMIN_READ_LIST_FORM_ID);
+                        break;
+                    case 2: // Update
+                        redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                        redeemAdminForm.sendCodeList(player, redeemCodesConfig, RedeemAdminForm.REDEEM_ADMIN_UPDATE_LIST_FORM_ID);
+                        break;
+                    case 3: // Delete
+                        redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                        redeemAdminForm.sendCodeList(player, redeemCodesConfig, RedeemAdminForm.REDEEM_ADMIN_DELETE_LIST_FORM_ID);
+                        break;
+                }
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_DELETE_LIST_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                String code = response.getClickedButton().getText();
+                codeBeingDeleted.put(player.getUniqueId(), code);
+                redeemAdminForm.sendDeleteConfirmation(player, code);
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_DELETE_CONFIRM_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                String code = codeBeingDeleted.remove(player.getUniqueId());
+
+                if (code != null && response.getClickedButtonId() == 0) { // "Yes" button
+                    Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                    redeemCodesConfig.remove(code);
+                    redeemCodesConfig.save();
+                    player.sendMessage("§aRedeem code '" + code + "' deleted successfully!");
+                }
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_READ_LIST_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                String code = response.getClickedButton().getText();
+                Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                Map<String, Object> codeData = redeemCodesConfig.getSection(code).getAll();
+                redeemAdminForm.sendCodeDetails(player, code, codeData);
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_UPDATE_LIST_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowSimple) {
+                FormWindowSimple form = (FormWindowSimple) event.getWindow();
+                FormResponseSimple response = form.getResponse();
+                String code = response.getClickedButton().getText();
+                codeBeingUpdated.put(player.getUniqueId(), code);
+                Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                Map<String, Object> codeData = redeemCodesConfig.getSection(code).getAll();
+                redeemAdminForm.sendUpdateForm(player, code, codeData);
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_UPDATE_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowCustom) {
+                FormWindowCustom form = (FormWindowCustom) event.getWindow();
+                FormResponseCustom response = form.getResponse();
+                String code = codeBeingUpdated.remove(player.getUniqueId());
+
+                if (code != null) {
+                    String quota = response.getInputResponse(0);
+                    String permission = response.getInputResponse(1);
+
+                    Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                    Map<String, Object> codeData = redeemCodesConfig.getSection(code).getAll();
+                    codeData.put("quota", quota);
+                    codeData.put("permission", permission);
+
+                    redeemCodesConfig.set(code, codeData);
+                    redeemCodesConfig.save();
+
+                    player.sendMessage("§aRedeem code '" + code + "' updated successfully!");
+                }
+            }
+        } else if (event.getFormID() == RedeemAdminForm.REDEEM_ADMIN_CREATE_FORM_ID) {
+            if (event.getWindow() instanceof FormWindowCustom) {
+                FormWindowCustom form = (FormWindowCustom) event.getWindow();
+                FormResponseCustom response = form.getResponse();
+
+                String code = response.getInputResponse(0).toUpperCase();
+                String quota = response.getInputResponse(1);
+                String permission = response.getInputResponse(2);
+                int rewardTypeIndex = response.getDropdownResponse(0).getElementID();
+
+                Config redeemCodesConfig = new Config(new File(getDataFolder(), "redeem_codes.yml"), Config.YAML);
+                if (redeemCodesConfig.exists(code)) {
+                    player.sendMessage("§cRedeem code '" + code + "' already exists.");
+                    return;
+                }
+
+                Map<String, Object> newData = new HashMap<>();
+                newData.put("quota", quota);
+                newData.put("permission", permission);
+
+                switch (rewardTypeIndex) {
+                    case 0: // Economy
+                        newData.put("type", 1);
+                        newData.put("money_value", Double.parseDouble(response.getInputResponse(4)));
+                        break;
+                    case 1: // Item
+                        newData.put("type", 2);
+                        newData.put("item_id", Integer.parseInt(response.getInputResponse(5)));
+                        newData.put("item_value", Integer.parseInt(response.getInputResponse(6)));
+                        break;
+                    case 2: // Effect
+                        newData.put("type", 3);
+                        newData.put("effect_name", response.getInputResponse(7));
+                        newData.put("effect_tier", Integer.parseInt(response.getInputResponse(8)));
+                        newData.put("effect_time", response.getInputResponse(9));
+                        break;
+                    case 3: // Multiple
+                        newData.put("type", 4);
+                        // For simplicity, we assume the admin has entered a valid YAML list.
+                        // A more robust solution would involve a YAML parser and validator.
+                        newData.put("rewards", new ArrayList<>());
+                        break;
+                }
+
+                redeemCodesConfig.set(code, newData);
+                redeemCodesConfig.save();
+
+                player.sendMessage("§aRedeem code '" + code + "' created successfully!");
+
+            }
         } else if (event.getFormID() == RedeemForm.REDEMPTION_FORM_ID) {
             if (event.getWindow() instanceof FormWindowCustom) {
                 FormWindowCustom form = (FormWindowCustom) event.getWindow();
@@ -168,18 +286,6 @@ public class Main extends PluginBase implements Listener {
                 List<String> redeemedUsers = redeemUsersConfig.getStringList(player.getUniqueId().toString());
                 if (redeemedUsers.contains(code)) {
                     player.sendMessage("§cYou have already redeemed this code.");
-                    return;
-                }
-
-                if (!codeData.containsKey("creation_timestamp")) {
-                    codeData.put("creation_timestamp", Instant.now().getEpochSecond());
-                }
-                long creationTimestamp = ((Number) codeData.get("creation_timestamp")).longValue();
-                long expiredHours = ((Number) codeData.getOrDefault("expired", -1)).longValue();
-                if (expiredHours != -1 && (creationTimestamp + (expiredHours * 3600)) < Instant.now().getEpochSecond()) {
-                    player.sendMessage("§cThis redeem code has expired.");
-                    redeemCodesConfig.remove(code);
-                    redeemCodesConfig.save();
                     return;
                 }
 

@@ -22,3 +22,6 @@ permissions:
       waffle.info.all:
         description: "Allows the user to see and access all menus in the info form"
         default: op
+  waffle.redeem.admin:
+    description: "Allows the user to manage redeem codes"
+    default: op
